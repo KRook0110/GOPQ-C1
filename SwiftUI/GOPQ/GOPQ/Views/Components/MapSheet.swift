@@ -7,28 +7,7 @@
 
 import SwiftUI
 
-struct MapSheets: View {
-    @State private var showMapSheet = false
-    
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Button("Sheets Modal") {
-                    showMapSheet = true
-                }.buttonStyle(.borderedProminent)
-            }
-            .padding()
-            .sheet(isPresented: $showMapSheet) {
-                BottomSheetView()
-                    .presentationBackground(.clear)
-                    .background(.clear)
-            }
-        }
-    }
-}
-
-struct BottomSheetView: View {
+struct MapSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedImage: String? = nil
     
@@ -112,10 +91,7 @@ struct BottomSheetView: View {
     }
 }
 
-#Preview {
-    BottomSheetView()
-}
 
 #Preview {
-    MapSheets()
+    MapSheet()
 }
