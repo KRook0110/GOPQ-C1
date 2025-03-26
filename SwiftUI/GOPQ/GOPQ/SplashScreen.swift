@@ -15,12 +15,11 @@ struct SplashScreen: View {
             
             VStack {
                 Image("gopq")
-                    .resizable()
-                    .frame(width:90,height:150)
-                    
+                 
                 
                 Text("Silahkan Masukkan Nama Lengkap Anda!")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.white).padding()
+                
                 
                 TextField("Username", text: $nama)
                     .padding(10)
