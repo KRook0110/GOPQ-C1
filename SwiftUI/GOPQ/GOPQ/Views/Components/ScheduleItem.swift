@@ -16,9 +16,9 @@ struct ScheduleItem: View {
     }
     
     let xPadding:CGFloat = 20;
-    let spaceBetweenTimeAndLocation:CGFloat = 2;
+    let spaceBetweenTimeAndLocation:CGFloat = 0;
     let lineThickness:CGFloat = 2;
-    let spaceBetweenTimeAndLine:CGFloat = 4;
+    let spaceBetweenTimeAndLine:CGFloat = 2;
     
     
     var body: some View {
