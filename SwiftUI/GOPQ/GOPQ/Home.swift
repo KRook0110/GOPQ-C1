@@ -7,21 +7,39 @@
 
 import SwiftUI
 
-struct Schedule: Identifiable {
-    let id = UUID()
-    let time: String
-    let location: String
-}
-
 struct home: View {
+    var schedules : [ScheduleItemData] = [
+        ScheduleItemData(
+            startTimeHour: 10,
+            startTimeMin: 20,
+            endTimeHour: 13,
+            endTimeMin: 10,
+            location: "Lobby 1",
+            message: "Hi hello",
+            soundName: "System.something"
+        ),
+        ScheduleItemData(
+            startTimeHour: 15,
+            startTimeMin: 20,
+            endTimeHour: 19,
+            endTimeMin: 20,
+            location: "Pantry",
+            message: "Hello Hi",
+            soundName: "System.something"
+        ),
+        ScheduleItemData(
+            startTimeHour: 8,
+            startTimeMin: 10,
+            endTimeHour: 15,
+            endTimeMin: 20,
+            location: "Pantry",
+            message: "Hello Hi",
+            soundName: "System.something"
+        )
+    ]
     
     @State private var showMapSheet = false
     
-    let schedules = [
-        Schedule(time: "07:00 - 12:00", location: "Lobby 1"),
-        Schedule(time: "13:00 - 15:00", location: "Lobby 2"),
-        Schedule(time: "16:00 - 18:00", location: "Lobby 1")
-    ]
     
     var body: some View {
         ZStack{
@@ -43,56 +61,31 @@ struct home: View {
                         }
                     }
                 }.padding(EdgeInsets(top:0, leading:30, bottom:15, trailing: 30))
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Selamat pagi,")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                        Text("Dicky Dharma Susanto")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.white)
-                        Text("Jumat, 21 Maret 2025")
-                            .foregroundColor(.gray)
-                    }.padding()
+                
+                BorderLine()
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Selamat pagi,")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                    Text("Dicky Dharma Susanto")
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(.white)
+                    Text("Jumat, 21 Maret 2025")
+                        .foregroundColor(.gray)
+                }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    VStack{
-                        Divider().background()
-                        ForEach(schedules){
-                            schedule in
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(schedule.time)
-                                        .font(.headline)
-                                        .bold()
-                                        .foregroundColor(.white)
-                                    Text(schedule.location)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Text("Edit")
-                                    .foregroundColor(.blue)
-                                    .underline()
-                            }
-                            .padding()
-                            .background(Color.black)
-                            Divider().background()
-                            
-                        }
-                        Spacer()
-                    }
-                }.sheet(isPresented: $showMapSheet) {
-                    MapSheet()
-                        .presentationBackground(.clear)
-                        .background(.clear)
-                }
+                
+                ScheduleList(schedules)
+            }.sheet(isPresented: $showMapSheet) {
+                MapSheet()
+                    .presentationBackground(.clear)
+                    .background(.clear)
             }
         }
     }
-
-    
-    
+}
 struct home_Previews: PreviewProvider {
     static var previews: some View {
         home()
