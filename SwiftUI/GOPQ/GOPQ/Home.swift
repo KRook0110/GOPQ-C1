@@ -37,7 +37,10 @@ struct home: View {
             soundName: "System.something"
         )
     ]
-
+    
+    @State private var showMapSheet = false
+    
+    
     var body: some View {
         ZStack{
             
@@ -51,17 +54,15 @@ struct home: View {
                         Image(systemName: "square.and.arrow.down")
                             .foregroundColor(.blue)
                             .font(.system(size: 30))
-                        Image(systemName: "mappin.and.ellipse")
-                            .foregroundColor(.blue)
-                            .font(.system(size: 30))
+                        
+                        Button{showMapSheet = true} label:{
+                            Label("", systemImage: "map").foregroundColor(.blue)
+                                .font(.system(size: 30))
+                        }
                     }
-                }
-               
-                .padding(.bottom,15)
-                .padding(.leading,30)
-                .padding(.trailing,30)
+                }.padding(EdgeInsets(top:0, leading:30, bottom:15, trailing: 30))
                 
-                
+                BorderLine()
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
@@ -73,43 +74,18 @@ struct home: View {
                         .foregroundColor(.white)
                     Text("Jumat, 21 Maret 2025")
                         .foregroundColor(.gray)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
+                }.padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                
-                //            List(schedules) { schedule in
-                //                HStack {
-                //                    VStack(alignment: .leading) {
-                //                        Text(schedule.time)
-                //                            .font(.headline)
-                //                            .bold()
-                //                            .foregroundColor(.white)
-                //                        Text(schedule.location)
-                //                            .foregroundColor(.gray)
-                //                    }
-                //                    Spacer()
-                //                    Text("Edit")
-                //                        .foregroundColor(.blue)
-                //                        .underline()
-                //                }
-                //                .padding()
-                //                .background(Color.black)
-                //            }
-                //            .scrollContentBackground(.hidden)
-                //            .background(Color.black)
-                //        }
-                //        .background(Color.black.edgesIgnoringSafeArea(.all))
-                VStack{
-                    ScheduleList(schedules)
-                    Spacer()
-                }
+                ScheduleList(schedules)
+            }.sheet(isPresented: $showMapSheet) {
+                MapSheet()
+                    .presentationBackground(.clear)
+                    .background(.clear)
             }
         }
     }
 }
-
-
 struct home_Previews: PreviewProvider {
     static var previews: some View {
         home()
