@@ -7,15 +7,14 @@
 
 import Foundation
 
-struct ScheduleItemData: Identifiable{
-    var id = UUID();
-    let startTimeHour: Int
-    let startTimeMin: Int
-    let endTimeHour: Int
-    let endTimeMin: Int
-    let location: String
-    let message: String
-    let soundName: String
+struct ScheduleItemData {
+    var startTimeHour: Int
+    var startTimeMin: Int
+    var endTimeHour: Int
+    var endTimeMin: Int
+    var location: String
+    var message: String
+    var soundName: String
     
     func getStartTimeFormat() -> String {
         return "\(leadingZero(startTimeHour)):\(leadingZero(startTimeMin))"
