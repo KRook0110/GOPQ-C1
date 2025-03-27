@@ -8,26 +8,14 @@
 import SwiftUI
 
 struct dashboard: View {
+    @State var showMapSheet: Bool = false
+    
     var body: some View {
         VStack {
     
-            HStack {
-                Image("gopq")
-                Spacer()
-                HStack(spacing: 16) {
-                    Image(systemName: "square.and.arrow.down")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 30))
-                    Image(systemName: "mappin.and.ellipse")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 30))
-                }
-            }
-            .padding()
-            .background(Color.black)
+            NavigationBar(showMapSheet:$showMapSheet)
             
-            
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 4){
                 Text("Selamat pagi,")
                     .font(.title2)
                     .foregroundColor(.white)
