@@ -9,11 +9,12 @@ import SwiftUI
 
 struct dashboard: View {
     @State var showMapSheet: Bool = false
+    @State var showImportSheet: Bool = false
     
     var body: some View {
         VStack {
     
-            NavigationBar(showMapSheet:$showMapSheet)
+            NavigationBar(showMapSheet:$showMapSheet, showImportSheet: $showImportSheet)
             
             VStack(alignment: .leading, spacing: 4){
                 Text("Selamat pagi,")
