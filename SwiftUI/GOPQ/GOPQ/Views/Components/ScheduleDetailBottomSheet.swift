@@ -12,7 +12,7 @@ enum PickerOptions {
     case end
 }
 
-fileprivate struct NavigationBar: View {
+fileprivate struct BottomSheetNavigationBar: View {
     @Environment(ObservableScheduleList.self) var schedules
     @Binding var isPresented: Bool
     var buffer: ScheduleItemData
@@ -102,7 +102,7 @@ struct ScheduleDetailBottomSheet: View {
     
     var body: some View {
         VStack {
-            NavigationBar($isPresented, buffer: tempSchedule, index: index)
+            BottomSheetNavigationBar($isPresented, buffer: tempSchedule, index: index)
             
             Picker("Start or End", selection: $pickerOption) {
                 Text("Start").tag(PickerOptions.start)

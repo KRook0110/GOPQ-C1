@@ -11,7 +11,7 @@ import SwiftUI
 struct GOPQApp: App {
     var body: some Scene {
         WindowGroup {
-            home()
+            ImportCSV()
         }
     }
 }

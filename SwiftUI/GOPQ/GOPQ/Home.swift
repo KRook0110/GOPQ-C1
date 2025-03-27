@@ -43,7 +43,7 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
 struct home: View {
     @State private var schedules = ObservableScheduleList(tempSchedules)
     
-    
+    @State var showImportSheet: Bool = false
     @State var showMapSheet: Bool = false
     
     
@@ -52,7 +52,7 @@ struct home: View {
             
             Color.black.ignoresSafeArea()
             VStack {
-                NavigationBar(showMapSheet: $showMapSheet)
+                NavigationBar(showMapSheet: $showMapSheet, showImportSheet: $showImportSheet)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
