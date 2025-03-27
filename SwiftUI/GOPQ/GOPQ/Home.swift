@@ -5,38 +5,44 @@
 //  Created by Yehezkiel Joseph Widianto on 26/03/25.
 //
 
+
+
+
 import SwiftUI
 
+fileprivate let tempSchedules : [ScheduleItemData] = [
+    ScheduleItemData(
+        startTimeHour: 10,
+        startTimeMin: 20,
+        endTimeHour: 13,
+        endTimeMin: 10,
+        location: "Lobby 1",
+        message: "Hi hello",
+        soundName: "System.something"
+    ),
+    ScheduleItemData(
+        startTimeHour: 15,
+        startTimeMin: 20,
+        endTimeHour: 19,
+        endTimeMin: 20,
+        location: "Pantry",
+        message: "Hello Hi",
+        soundName: "System.something"
+    ),
+    ScheduleItemData(
+        startTimeHour: 8,
+        startTimeMin: 10,
+        endTimeHour: 15,
+        endTimeMin: 20,
+        location: "Pantry",
+        message: "Hello Hi",
+        soundName: "System.something"
+    )
+]
+
 struct home: View {
-    var schedules : [ScheduleItemData] = [
-        ScheduleItemData(
-            startTimeHour: 10,
-            startTimeMin: 20,
-            endTimeHour: 13,
-            endTimeMin: 10,
-            location: "Lobby 1",
-            message: "Hi hello",
-            soundName: "System.something"
-        ),
-        ScheduleItemData(
-            startTimeHour: 15,
-            startTimeMin: 20,
-            endTimeHour: 19,
-            endTimeMin: 20,
-            location: "Pantry",
-            message: "Hello Hi",
-            soundName: "System.something"
-        ),
-        ScheduleItemData(
-            startTimeHour: 8,
-            startTimeMin: 10,
-            endTimeHour: 15,
-            endTimeMin: 20,
-            location: "Pantry",
-            message: "Hello Hi",
-            soundName: "System.something"
-        )
-    ]
+    @State private var schedules = ObservableScheduleList(tempSchedules)
+    
     
     @State private var showMapSheet = false
     
@@ -77,7 +83,9 @@ struct home: View {
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                ScheduleList(schedules)
+                ScheduleList()
+                    .environment(schedules)
+                
             }.sheet(isPresented: $showMapSheet) {
                 MapSheet()
                     .presentationBackground(.clear)

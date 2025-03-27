@@ -1,32 +1,12 @@
 //
-//  ScheduleList.swift
+//  EnviromentalSchedulesTemp.swift
 //  GOPQ
 //
-//  Created by Shawn Andrew on 25/03/25.
+//  Created by Shawn Andrew on 27/03/25.
 //
 
-
 import SwiftUI
-
-struct ScheduleList: View {
-    @Environment(ObservableScheduleList.self) var schedules
-    
-    
-    var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                BorderLine()
-                ForEach(schedules.data.indices, id: \.self) {index in
-                    VStack {
-                        ScheduleItem(index: index)
-                            .padding(18)
-                        BorderLine()
-                    }
-                }
-            }
-        }
-    }
-}
+import Foundation
 
 fileprivate var schedules : [ScheduleItemData] = [
     ScheduleItemData(
@@ -58,13 +38,22 @@ fileprivate var schedules : [ScheduleItemData] = [
     )
 ]
 
+struct EnviromentalSchedulesTemp<Content: View>: View  {
+    let content: () -> Content
+    init(@ViewBuilder content: @escaping () -> Content )  {
+        self.content = content
+    }
+    var body: some View {
+        HStack {
+            content()
+                .environment(ObservableScheduleList(schedules))
+            
+        }
+    }
+}
 
 #Preview {
-    ZStack {
-        Rectangle()
-            .fill(.black)
-            .ignoresSafeArea()
-        ScheduleList()
-            .environment(ObservableScheduleList(schedules))
+    EnviromentalSchedulesTemp {
+        Text("Yay")
     }
 }
