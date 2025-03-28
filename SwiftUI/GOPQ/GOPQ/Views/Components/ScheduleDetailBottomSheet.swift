@@ -12,15 +12,13 @@ enum PickerOptions {
     case end
 }
 
-fileprivate struct NavigationBar: View {
+fileprivate struct BottomSheetNavigationBar: View {
     @Environment(ObservableScheduleList.self) var schedules
     @Binding var isPresented: Bool
     var buffer: ScheduleItemData
-    var index: Int
     
-    init (_ isPresented: Binding<Bool>, buffer: ScheduleItemData, index: Int) {
+    init (_ isPresented: Binding<Bool>, buffer: ScheduleItemData) {
         self._isPresented = isPresented
-        self.index = index
         self.buffer = buffer
     }
     
@@ -34,8 +32,7 @@ fileprivate struct NavigationBar: View {
             Spacer()
             Button {
                 isPresented = false
-                schedules.replace(with: buffer, at: index)
-                
+                schedules.update(target: buffer)
             } label: {
                 Text("Save")
             }
@@ -78,31 +75,23 @@ fileprivate struct TimePicker: View {
 
 struct ScheduleDetailBottomSheet: View {
     
-    var index: Int
+    var schedule: ScheduleItemData
     @Binding var isPresented: Bool
-    @State var tempSchedule: ScheduleItemData = ScheduleItemData(
-                    startTimeHour: 8,
-                    startTimeMin: 10,
-                    endTimeHour: 15,
-                    endTimeMin: 20,
-                    location: "Lmao",
-                    message: "Hello Hi",
-                    soundName: "System.something"
-                )
-
     
-    @Environment(ObservableScheduleList.self ) var schedules
-    
+    @State private var tempSchedule: ScheduleItemData
+    @Environment(ObservableScheduleList.self ) private var schedules
     @State private var pickerOption: PickerOptions = .start
+    @State private var removeSchedule: Bool = false
     
-    init (sheetControl isPresented: Binding<Bool>, index: Int) {
-        self.index = index
+    init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
+        self.schedule = schedule
         self._isPresented = isPresented
+        self.tempSchedule = schedule
     }
     
     var body: some View {
         VStack {
-            NavigationBar($isPresented, buffer: tempSchedule, index: index)
+            BottomSheetNavigationBar($isPresented, buffer: tempSchedule)
             
             Picker("Start or End", selection: $pickerOption) {
                 Text("Start").tag(PickerOptions.start)
@@ -118,13 +107,52 @@ struct ScheduleDetailBottomSheet: View {
             case .end:
                 TimePicker(hour: $tempSchedule.endTimeHour, minute: $tempSchedule.endTimeMin)
             }
+            
+            Form {
+                LabeledContent  {
+                    TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
+                        Text("Location")
+                    }
+                    .foregroundStyle(.white.opacity(0.7))
+                    .multilineTextAlignment(.trailing)
+                } label:  {
+                    Text("Location")
+                }
+                
+                LabeledContent  {
+                    TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
+                        Text("Message")
+                    }
+                    .foregroundStyle(.white.opacity(0.7))
+                    .multilineTextAlignment(.trailing)
+                } label:  {
+                    Text("Message")
+                }
+            }
+            
+            Form {
+                Button {
+                    isPresented = false
+                    removeSchedule = true
+                } label: {
+                    HStack{
+                        Spacer()
+                        Text("Delete Schedule")
+                            .foregroundStyle(.red)
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                    }
+                }
+                
+            }
             Spacer()
         }
-        .onAppear {
-            tempSchedule = schedules.data[index]
+        .onDisappear {
+            schedules.remove(id: schedule.id)
         }
     }
 }
+     
 
 
 fileprivate var schedules : [ScheduleItemData] = [
@@ -162,7 +190,15 @@ fileprivate var schedules : [ScheduleItemData] = [
         Rectangle()
             .fill(Color("DarkGray"))
             .ignoresSafeArea()
-        ScheduleDetailBottomSheet(sheetControl: .constant(true), index: 0 )
+        ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
+            startTimeHour: 10,
+            startTimeMin: 20,
+            endTimeHour: 13,
+            endTimeMin: 10,
+            location: "Lobby 1",
+            message: "Hi hello",
+            soundName: "System.something"
+        ) )
             .environment(ObservableScheduleList(schedules))
     }
 }

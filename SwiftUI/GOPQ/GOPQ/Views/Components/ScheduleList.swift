@@ -16,13 +16,18 @@ struct ScheduleList: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 BorderLine()
-                ForEach(schedules.data.indices, id: \.self) {index in
-                    VStack {
-                        ScheduleItem(index: index)
-                            .padding(18)
-                        BorderLine()
-                    }
+                ForEach(schedules.data, id:\.id) { schedule in
+                    ScheduleItem(schedule: schedule)
+                        .padding(18)
+                    BorderLine()
                 }
+//                ForEach(schedules.data, id: \.self) {schedule in
+//                    VStack {
+//                        ScheduleItem(index: schedules.data.firstIndex(where: $0.id == schedule.id))
+//                            .padding(18)
+//                        BorderLine()
+//                    }
+//                }
             }
         }
     }

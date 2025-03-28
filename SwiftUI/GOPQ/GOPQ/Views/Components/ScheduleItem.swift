@@ -10,9 +10,8 @@ import SwiftUI
 
 struct ScheduleItem: View {
     
-    var index: Int
+    var schedule: ScheduleItemData
     
-    @Environment(ObservableScheduleList.self) var schedules
     
     let xPadding:CGFloat = 20;
     let spaceBetweenTimeAndLocation:CGFloat = 0;
@@ -24,12 +23,12 @@ struct ScheduleItem: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("\(schedules.data[index].getStartTimeFormat()) - \(schedules.data[index].getEndTimeFormat())")
+                Text("\(schedule.getStartTimeFormat()) - \(schedule.getEndTimeFormat())")
                     .bold( )
                     .font(.largeTitle)
                     .padding(.bottom, spaceBetweenTimeAndLocation)
                     .foregroundStyle(.white)
-                Text(schedules.data[index].location)
+                Text(schedule.location)
                     .foregroundStyle(.gray)
             }
             .padding(.leading, xPadding)
@@ -42,7 +41,7 @@ struct ScheduleItem: View {
                     .padding(.trailing, xPadding)
             }
             .sheet(isPresented: $showBottomSheet) {
-                ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, index: index)
+                ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
                     .presentationCornerRadius(10)
                     .background(Color("DarkGray"))
                 
@@ -87,7 +86,7 @@ fileprivate var schedules : [ScheduleItemData] = [
             .background(.black)
             .ignoresSafeArea()
         ScheduleItem(
-            index: 0
+            schedule: schedules[0]
         )
         .environment(ObservableScheduleList(schedules))
     }
