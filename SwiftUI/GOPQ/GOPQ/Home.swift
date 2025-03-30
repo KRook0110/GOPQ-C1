@@ -43,8 +43,8 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
 struct home: View {
     @State private var schedules = ObservableScheduleList(tempSchedules)
     
-    
-    @State private var showMapSheet = false
+    @State var showImportSheet: Bool = false
+    @State var showMapSheet: Bool = false
     
     
     var body: some View {
@@ -52,23 +52,7 @@ struct home: View {
             
             Color.black.ignoresSafeArea()
             VStack {
-                
-                HStack {
-                    Image("gopq")
-                    Spacer()
-                    HStack(spacing: 16) {
-                        Image(systemName: "square.and.arrow.down")
-                            .foregroundColor(.blue)
-                            .font(.system(size: 30))
-                        
-                        Button{showMapSheet = true} label:{
-                            Label("", systemImage: "map").foregroundColor(.blue)
-                                .font(.system(size: 30))
-                        }
-                    }
-                }.padding(EdgeInsets(top:0, leading:30, bottom:15, trailing: 30))
-                
-                BorderLine()
+                NavigationBar(showMapSheet: $showMapSheet, showImportSheet: $showImportSheet)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
@@ -94,8 +78,13 @@ struct home: View {
         }
     }
 }
+
 struct home_Previews: PreviewProvider {
+    
+    @State static var showMapSheet = false
+    
     static var previews: some View {
-        home()
+        home( showMapSheet: showMapSheet)
     }
 }
+

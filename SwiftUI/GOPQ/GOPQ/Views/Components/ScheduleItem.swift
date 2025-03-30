@@ -43,7 +43,7 @@ struct ScheduleItem: View {
             .sheet(isPresented: $showBottomSheet) {
                 ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
                     .presentationCornerRadius(10)
-                    .background(Color("DarkGray"))
+                    .background(Color("ModularBackground"))
                 
             }
         }

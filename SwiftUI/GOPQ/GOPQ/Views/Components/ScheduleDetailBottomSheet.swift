@@ -92,7 +92,6 @@ struct ScheduleDetailBottomSheet: View {
     var body: some View {
         VStack {
             BottomSheetNavigationBar($isPresented, buffer: tempSchedule)
-            
             Picker("Start or End", selection: $pickerOption) {
                 Text("Start").tag(PickerOptions.start)
                 Text("End").tag(PickerOptions.end)
@@ -148,7 +147,11 @@ struct ScheduleDetailBottomSheet: View {
             Spacer()
         }
         .onDisappear {
-            schedules.remove(id: schedule.id)
+            if removeSchedule {
+                withAnimation(.easeInOut) {
+                    schedules.remove(id: schedule.id)
+                }
+            }
         }
     }
 }
@@ -188,7 +191,7 @@ fileprivate var schedules : [ScheduleItemData] = [
 #Preview {
     ZStack {
         Rectangle()
-            .fill(Color("DarkGray"))
+            .fill(Color("ModularBackground"))
             .ignoresSafeArea()
         ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
             startTimeHour: 10,
