@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct ScheduleItemData {
+struct ScheduleItemData : Identifiable{
+    let id = UUID()
     var startTimeHour: Int
     var startTimeMin: Int
     var endTimeHour: Int

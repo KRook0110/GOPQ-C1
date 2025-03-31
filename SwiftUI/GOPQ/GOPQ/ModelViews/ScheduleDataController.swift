@@ -40,13 +40,17 @@ import SwiftUI
     }
     
     
-    func replace(with source:ScheduleItemData,  at index: Int) {
-        data.remove(at: index)
-        insert(source)
-//        data.append(source)
-//        data.sort(by: { lhs, rhs in
-//            compare(lhs, rhs)
-//        })
+    func update(target: ScheduleItemData) {
+        if let i = data.firstIndex(where: { $0.id == target.id }) {
+            data[i] = target
+            data.sort(by: { lhs, rhs in
+                compare(lhs, rhs)
+            })
+        }
+    }
+    
+    func remove(id: UUID) {
+        data.removeAll(where: { $0.id == id})
     }
     
 }
