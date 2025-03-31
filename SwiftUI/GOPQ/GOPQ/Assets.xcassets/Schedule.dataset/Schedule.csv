@@ -1,0 +1,6 @@
+Identifier;startTimeHour;startTimeMin;endTimeHour;endTimeMin;location;message;soundName
+1;7;0;9;0;Lobby 1;test;test.mp3
+2;10;30;11;30;Lobby 2;test;test.mp3
+3;12;30;13;30;Lobby 3;test;test.mp3
+4;16;0;17;30;Parkiran;test;test.mp3
+5;18;0;20;0;Kantin;test;test.mp3

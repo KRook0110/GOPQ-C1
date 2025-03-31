@@ -5,9 +5,6 @@
 //  Created by Yehezkiel Joseph Widianto on 26/03/25.
 //
 
-
-
-
 import SwiftUI
 
 fileprivate let tempSchedules : [ScheduleItemData] = [
@@ -45,14 +42,14 @@ struct home: View {
     
     @State var showImportSheet: Bool = false
     @State var showMapSheet: Bool = false
-    
+    @StateObject var viewModel = CSVController()
     
     var body: some View {
         ZStack{
             
             Color.black.ignoresSafeArea()
             VStack {
-                NavigationBar(showMapSheet: $showMapSheet, showImportSheet: $showImportSheet)
+                NavigationBar(showMapSheet: $showMapSheet, showImportSheet: $showImportSheet, selectedFile: viewModel)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
@@ -70,10 +67,6 @@ struct home: View {
                 ScheduleList()
                     .environment(schedules)
                 
-            }.sheet(isPresented: $showMapSheet) {
-                MapSheet()
-                    .presentationBackground(.clear)
-                    .background(.clear)
             }
         }
     }
