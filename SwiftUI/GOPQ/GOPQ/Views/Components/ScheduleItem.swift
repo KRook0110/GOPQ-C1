@@ -52,6 +52,7 @@ struct ScheduleItem: View {
 
 fileprivate var schedules : [ScheduleItemData] = [
     ScheduleItemData(
+        employeeName: "Dicky",
         startTimeHour: 10,
         startTimeMin: 20,
         endTimeHour: 13,
@@ -61,6 +62,7 @@ fileprivate var schedules : [ScheduleItemData] = [
         soundName: "System.something"
     ),
     ScheduleItemData(
+        employeeName: "Dicky",
         startTimeHour: 15,
         startTimeMin: 20,
         endTimeHour: 19,
@@ -70,6 +72,7 @@ fileprivate var schedules : [ScheduleItemData] = [
         soundName: "System.something"
     ),
     ScheduleItemData(
+        employeeName: "Dicky",
         startTimeHour: 8,
         startTimeMin: 10,
         endTimeHour: 15,

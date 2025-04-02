@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct ScheduleItemData : Identifiable{
+struct ScheduleItemData : Identifiable, Equatable{
     let id = UUID()
+    var employeeName: String
     var startTimeHour: Int
     var startTimeMin: Int
     var endTimeHour: Int
@@ -17,6 +18,10 @@ struct ScheduleItemData : Identifiable{
     var message: String
     var soundName: String
     
+    static func == (lhs: Self, rhs: Self) -> Bool {
+            return lhs.id == rhs.id
+        }
+        
     func getStartTimeFormat() -> String {
         return "\(leadingZero(startTimeHour)):\(leadingZero(startTimeMin))"
     }
