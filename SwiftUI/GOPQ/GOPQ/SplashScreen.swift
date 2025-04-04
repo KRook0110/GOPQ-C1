@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct SplashScreen: View {
-    @State private var nama:String = ""
+    @Environment(UserDataController.self) var userdata
+    @State private var usernameBuffer: String = ""
     var body: some View {
         ZStack{
             Color.black.ignoresSafeArea()
@@ -21,17 +22,16 @@ struct SplashScreen: View {
                     .foregroundStyle(.white).padding()
                 
                 
-                TextField("Username", text: $nama)
+                TextField("Username", text: $usernameBuffer)
                     .padding(10)
                     .background(.gray)
                     .foregroundColor(.white)
                     .frame(width:200)
                     .cornerRadius(15)
                 
-                Button(action: {
-                    print("diklik")
-                })
-                {
+                Button {
+                    userdata.username = usernameBuffer
+                } label: {
                     Text("Konfirmasi")
                         .padding(10)
                         .background(Color.blue)
@@ -41,13 +41,13 @@ struct SplashScreen: View {
                         .padding(.top)
                        
                 }
-
-                
             }
         }
     }
 }
 
 #Preview {
-    SplashScreen()
+    EnvironmentalTemp {
+        SplashScreen()
+    }
 }

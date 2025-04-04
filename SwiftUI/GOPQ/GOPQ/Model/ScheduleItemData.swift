@@ -9,6 +9,7 @@ import Foundation
 
 struct ScheduleItemData : Identifiable{
     let id = UUID()
+    var employeeName: String
     var startTimeHour: Int
     var startTimeMin: Int
     var endTimeHour: Int
