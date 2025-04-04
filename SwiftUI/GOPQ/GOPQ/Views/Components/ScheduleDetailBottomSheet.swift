@@ -13,14 +13,9 @@ enum PickerOptions {
 }
 
 fileprivate struct BottomSheetNavigationBar: View {
-    @Environment(ObservableScheduleList.self) var schedules
+    @Environment(ScheduleController.self) var schedules
     @Binding var isPresented: Bool
-    var buffer: ScheduleItemData
-    
-    init (_ isPresented: Binding<Bool>, buffer: ScheduleItemData) {
-        self._isPresented = isPresented
-        self.buffer = buffer
-    }
+    @Binding var saveSchedule: Bool
     
     var body: some View {
         HStack(alignment: .top) {
@@ -32,7 +27,7 @@ fileprivate struct BottomSheetNavigationBar: View {
             Spacer()
             Button {
                 isPresented = false
-                schedules.update(target: buffer)
+                saveSchedule = true
             } label: {
                 Text("Save")
             }
@@ -79,9 +74,10 @@ struct ScheduleDetailBottomSheet: View {
     @Binding var isPresented: Bool
     
     @State private var tempSchedule: ScheduleItemData
-    @Environment(ObservableScheduleList.self ) private var schedules
+    @Environment(ScheduleController.self ) private var schedules
     @State private var pickerOption: PickerOptions = .start
     @State private var removeSchedule: Bool = false
+    @State private var saveSchedule: Bool = false
     
     init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
@@ -91,7 +87,7 @@ struct ScheduleDetailBottomSheet: View {
     
     var body: some View {
         VStack {
-            BottomSheetNavigationBar($isPresented, buffer: tempSchedule)
+            BottomSheetNavigationBar(isPresented: $isPresented, saveSchedule: $saveSchedule)
             Picker("Start or End", selection: $pickerOption) {
                 Text("Start").tag(PickerOptions.start)
                 Text("End").tag(PickerOptions.end)
@@ -152,56 +148,33 @@ struct ScheduleDetailBottomSheet: View {
                     schedules.remove(id: schedule.id)
                 }
             }
+            if saveSchedule {
+                withAnimation(.easeInOut)  {
+                    schedules.update(target: tempSchedule)
+                }
+            }
         }
     }
 }
      
 
 
-fileprivate var schedules : [ScheduleItemData] = [
-    ScheduleItemData(
-        startTimeHour: 10,
-        startTimeMin: 20,
-        endTimeHour: 13,
-        endTimeMin: 10,
-        location: "Lobby 1",
-        message: "Hi hello",
-        soundName: "System.something"
-    ),
-    ScheduleItemData(
-        startTimeHour: 15,
-        startTimeMin: 20,
-        endTimeHour: 19,
-        endTimeMin: 20,
-        location: "Pantry",
-        message: "Hello Hi",
-        soundName: "System.something"
-    ),
-    ScheduleItemData(
-        startTimeHour: 8,
-        startTimeMin: 10,
-        endTimeHour: 15,
-        endTimeMin: 20,
-        location: "Pantry",
-        message: "Hello Hi",
-        soundName: "System.something"
-    )
-]
 
 #Preview {
     ZStack {
         Rectangle()
             .fill(Color("ModularBackground"))
             .ignoresSafeArea()
-        ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
-            startTimeHour: 10,
-            startTimeMin: 20,
-            endTimeHour: 13,
-            endTimeMin: 10,
-            location: "Lobby 1",
-            message: "Hi hello",
-            soundName: "System.something"
-        ) )
-            .environment(ObservableScheduleList(schedules))
+        EnvironmentalTemp {
+            ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
+                employeeName: "John Doe",
+                startTimeHour: 10,
+                startTimeMin: 20,
+                endTimeHour: 13,
+                endTimeMin: 10,
+                location: "Lobby 1",
+                message: "Hi hello",
+                soundName: "System.something"
+            ) )}
     }
 }

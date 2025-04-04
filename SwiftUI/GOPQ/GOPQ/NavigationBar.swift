@@ -10,15 +10,14 @@ import UniformTypeIdentifiers
 
 struct NavigationBar: View {
     
-    @Binding var showMapSheet: Bool
-    @Binding var showImportSheet: Bool
+    @State var showMapSheet: Bool = false
     
-    @ObservedObject var selectedFile: CSVController
     
     var body: some View {
         HStack {
             Image("gopq")
                 .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 45)
                 .padding(.leading, 15)
                 .padding(.trailing, 30)
@@ -27,24 +26,9 @@ struct NavigationBar: View {
             
             HStack(spacing: 16) {
                 
-                Button {
-                    showImportSheet = true
-                } label: {
-                    Image(systemName: "square.and.arrow.down")
-                        .resizable()
-                        .foregroundColor(.blue)
-                        .frame(width: 28, height: 35)
-                }
-                .fileImporter(
-                    isPresented: $showImportSheet,
-                    allowedContentTypes: [
-                        UTType.commaSeparatedText,
-                        UTType(filenameExtension: "csv")!
-                    ]
-                ) { result in
-                    selectedFile.handleFileImport(for: result)
-                }
-                
+                ImportScheduleListButton()
+                    .frame(width: 35)
+
                 Button { showMapSheet = true } label: {
                     Image(systemName: "map.fill")
                         .resizable()
@@ -65,13 +49,35 @@ struct NavigationBar: View {
 }
 
 #Preview {
-    @Previewable @State var showMapSheet = false
-    @Previewable @State var showImportSheet: Bool = false
     let csvController = CSVController()
     
-    NavigationBar(
-           showMapSheet: $showMapSheet,
-           showImportSheet: $showImportSheet,
-           selectedFile: csvController
-       )
+    EnvironmentalTemp {
+        NavigationBar()
+    }
+}
+
+struct ImportScheduleListButton: View {
+    @State var showImportSheet: Bool = false
+    @Environment(CSVController.self) var csvController
+    @Environment(ScheduleController.self) var scheduleController
+    
+    var body: some View {
+        Button {
+            showImportSheet = true
+        } label: {
+            Image(systemName: "square.and.arrow.down")
+                .resizable()
+                .foregroundColor(.blue)
+                .aspectRatio(contentMode: .fit)
+        }
+        .fileImporter(
+            isPresented: $showImportSheet,
+            allowedContentTypes: [
+                UTType.commaSeparatedText,
+                UTType(filenameExtension: "csv")!
+            ]
+        ) { result in
+            scheduleController.set( csvController.handleFileImport(for: result))
+        }
+    }
 }

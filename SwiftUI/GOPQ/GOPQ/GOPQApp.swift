@@ -9,9 +9,22 @@ import SwiftUI
 
 @main
 struct GOPQApp: App {
+    @State var csvController = CSVController()
+    @State var observableScheduleController = ScheduleController()
+    @State var userData = UserDataController()
     var body: some Scene {
         WindowGroup {
-            home()
+            Group {
+                if userData.username.isEmpty {
+                    SplashScreen()
+                }
+                else {
+                    home()
+                }
+            }
         }
+        .environment(csvController)
+        .environment(observableScheduleController)
+        .environment(userData)
     }
 }
