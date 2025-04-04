@@ -6,38 +6,70 @@
 //
 
 import SwiftUI
+enum CSVParsingError:  Error { // sry saya malas++
+    case parsingError(String)
+}
 
-class CSVController:ObservableObject{
+@Observable
+class CSVController{
     
-    @Published var content: String = ""
-    
-    func handleFileImport (for result: Result<URL, Error>){
+    func handleFileImport (for result: Result<URL, Error>) -> [ScheduleItemData] {
         switch result {
         case .success(let url):
             print("File loaded: \(url.lastPathComponent)")
-            readFile(url)
+            do {
+                return try readFile(url)
+            } catch CSVParsingError.parsingError(let errorMsg) {
+                print(errorMsg)
+            } catch {
+                print("unknown error: \(error.localizedDescription)")
+            }
            
         case .failure(let error):
             print("Error loading file \(error)")
         }
+        return []
     }
     
-    func readFile(_ url: URL) {
+    func readFile(_ url: URL) throws -> [ScheduleItemData] {
         guard url.startAccessingSecurityScopedResource() else {
-            print("Failed acces resources")
-            return
+            throw CSVParsingError.parsingError("Failed trying to access \(url)")
         }
         
         defer { url.stopAccessingSecurityScopedResource() }
         
-        do {
-            let content = try String(contentsOf: url, encoding: .utf8)
-            self.content = content
-            print("File import suceed:")
-            print(content)
-        } catch {
-            print("Error: \(error.localizedDescription)")
+        let content = try String(contentsOf: url, encoding: .utf8)
+        return parseCSV(content: content)
+    }
+    
+    private func parseCSV(content: String) -> [ScheduleItemData] {
+        var result = [ScheduleItemData]()
+        let rows = content.components(separatedBy: "\n")
+        
+        for row in rows {
+            let trimmedRow = row.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedRow.isEmpty else { continue }
+            
+            let columns = trimmedRow.components(separatedBy: ";")
+            guard columns.count >= 7 else {
+                print("Invalid row: \(trimmedRow)")
+                continue
+            }
+            
+            let schedule = ScheduleItemData(
+                employeeName: columns[0].trimmingCharacters(in: .whitespaces),
+                startTimeHour: Int(columns[1]) ?? 0,
+                startTimeMin: Int(columns[2]) ?? 0,
+                endTimeHour: Int(columns[3]) ?? 0,
+                endTimeMin: Int(columns[4]) ?? 0,
+                location: columns[5].trimmingCharacters(in: .whitespaces),
+                message: columns[6].trimmingCharacters(in: .whitespaces),
+                soundName: "System Default"
+            )
+            result.append(schedule)
+            print("Successfully parsed: \(schedule)")
         }
+        return result
     }
     
 }

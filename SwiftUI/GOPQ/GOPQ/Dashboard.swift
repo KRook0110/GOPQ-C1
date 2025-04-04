@@ -10,12 +10,11 @@ import SwiftUI
 struct dashboard: View {
     @State var showMapSheet: Bool = false
     @State var showImportSheet: Bool = false
-    @StateObject var viewModel = CSVController()
     
     var body: some View {
         VStack {
     
-            NavigationBar(showMapSheet:$showMapSheet, showImportSheet: $showImportSheet, selectedFile: viewModel)
+            NavigationBar()
             
             VStack(alignment: .leading, spacing: 4){
                 Text("Selamat pagi,")
@@ -51,6 +50,7 @@ struct dashboard: View {
 
 struct dashboard_Previews: PreviewProvider {
     static var previews: some View {
+        
         dashboard()
     }
 }

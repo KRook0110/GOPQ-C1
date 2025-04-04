@@ -9,6 +9,7 @@ import SwiftUI
 
 fileprivate let tempSchedules : [ScheduleItemData] = [
     ScheduleItemData(
+        employeeName: "Testing Person",
         startTimeHour: 10,
         startTimeMin: 20,
         endTimeHour: 13,
@@ -18,6 +19,7 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
         soundName: "System.something"
     ),
     ScheduleItemData(
+        employeeName: "Testing Person",
         startTimeHour: 15,
         startTimeMin: 20,
         endTimeHour: 19,
@@ -27,6 +29,7 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
         soundName: "System.something"
     ),
     ScheduleItemData(
+        employeeName: "Testing Person",
         startTimeHour: 8,
         startTimeMin: 10,
         endTimeHour: 15,
@@ -38,18 +41,13 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
 ]
 
 struct home: View {
-    @State private var schedules = ObservableScheduleList(tempSchedules)
-    
-    @State var showImportSheet: Bool = false
-    @State var showMapSheet: Bool = false
-    @StateObject var viewModel = CSVController()
     
     var body: some View {
         ZStack{
             
             Color.black.ignoresSafeArea()
             VStack {
-                NavigationBar(showMapSheet: $showMapSheet, showImportSheet: $showImportSheet, selectedFile: viewModel)
+                NavigationBar()
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
@@ -64,8 +62,9 @@ struct home: View {
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                ScheduleList()
-                    .environment(schedules)
+                    ScheduleList()
+                
+                Spacer()
                 
             }
         }
@@ -74,10 +73,42 @@ struct home: View {
 
 struct home_Previews: PreviewProvider {
     
-    @State static var showMapSheet = false
-    
     static var previews: some View {
-        home( showMapSheet: showMapSheet)
+        EnvironmentalTemp {
+            home()
+        }
     }
 }
 
+fileprivate var schedules : [ScheduleItemData] = [
+    ScheduleItemData(
+        employeeName: "Testing Person",
+        startTimeHour: 10,
+        startTimeMin: 20,
+        endTimeHour: 13,
+        endTimeMin: 10,
+        location: "Lobby 1",
+        message: "Hi hello",
+        soundName: "System.something"
+    ),
+    ScheduleItemData(
+        employeeName: "Testing Person",
+        startTimeHour: 15,
+        startTimeMin: 20,
+        endTimeHour: 19,
+        endTimeMin: 20,
+        location: "Pantry",
+        message: "Hello Hi",
+        soundName: "System.something"
+    ),
+    ScheduleItemData(
+        employeeName: "Testing Person",
+        startTimeHour: 8,
+        startTimeMin: 10,
+        endTimeHour: 15,
+        endTimeMin: 20,
+        location: "Pantry",
+        message: "Hello Hi",
+        soundName: "System.something"
+    )
+]

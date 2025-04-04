@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@Observable class ObservableScheduleList {
+@Observable class ScheduleController {
     var data: [ScheduleItemData]
     
     init() {
@@ -15,12 +15,17 @@ import SwiftUI
     }
     
     init(_ source: [ScheduleItemData]) {
+        self.data = []
+        self.set(source)
+    }
+    
+    func set(_ source: [ScheduleItemData]) {
         self.data = source
         self.data.sort { (lhs, rhs) -> Bool in
             compare(lhs, rhs)
         }
     }
-    
+
     func compare(_ lhs:ScheduleItemData, _ rhs:ScheduleItemData) -> Bool {
         if lhs.startTimeHour != rhs.startTimeHour{
             return lhs.startTimeHour < rhs.startTimeHour
