@@ -13,7 +13,7 @@ struct NavigationBar: View {
     @Binding var showMapSheet: Bool
     @Binding var showImportSheet: Bool
     
-    @EnvironmentObject var csvController: CSVController
+    @ObservedObject var selectedFile: CSVController
     
     var body: some View {
         HStack {
@@ -42,7 +42,7 @@ struct NavigationBar: View {
                         UTType(filenameExtension: "csv")!
                     ]
                 ) { result in
-                    csvController.handleFileImport(for: result)
+                    selectedFile.handleFileImport(for: result)
                 }
                 
                 Button { showMapSheet = true } label: {
@@ -71,6 +71,7 @@ struct NavigationBar: View {
     
     NavigationBar(
            showMapSheet: $showMapSheet,
-           showImportSheet: $showImportSheet
+           showImportSheet: $showImportSheet,
+           selectedFile: csvController
        )
 }

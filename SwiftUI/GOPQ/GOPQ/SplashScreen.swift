@@ -8,20 +8,18 @@
 import SwiftUI
 
 struct SplashScreen: View {
-    
     @State private var nama:String = ""
-    @EnvironmentObject var userData: UserData
-    
     var body: some View {
         ZStack{
             Color.black.ignoresSafeArea()
             
             VStack {
                 Image("gopq")
-                
+                 
                 
                 Text("Silahkan Masukkan Nama Lengkap Anda!")
                     .foregroundStyle(.white).padding()
+                
                 
                 TextField("Username", text: $nama)
                     .padding(10)
@@ -31,9 +29,7 @@ struct SplashScreen: View {
                     .cornerRadius(15)
                 
                 Button(action: {
-                    if !nama.isEmpty {
-                        userData.userName = nama
-                    }
+                    print("diklik")
                 })
                 {
                     Text("Konfirmasi")
@@ -43,9 +39,9 @@ struct SplashScreen: View {
                         .cornerRadius(8)
                         .frame(width:300)
                         .padding(.top)
-                    
+                       
                 }
-                
+
                 
             }
         }
