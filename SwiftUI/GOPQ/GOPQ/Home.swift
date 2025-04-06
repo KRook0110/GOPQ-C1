@@ -42,6 +42,8 @@ fileprivate let tempSchedules : [ScheduleItemData] = [
 
 struct home: View {
     
+    @Environment(UserDataController.self) var userData
+
     var body: some View {
         ZStack{
             
@@ -53,11 +55,11 @@ struct home: View {
                     Text("Selamat pagi,")
                         .font(.title2)
                         .foregroundColor(.white)
-                    Text("Dicky Dharma Susanto")
+                    Text(userData.username)
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
-                    Text("Jumat, 21 Maret 2025")
+                    Text(Date.now.formatted(date: .complete, time: .omitted))
                         .foregroundColor(.gray)
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
