@@ -10,6 +10,7 @@ import SwiftUI
 struct dashboard: View {
     @State var showMapSheet: Bool = false
     @State var showImportSheet: Bool = false
+    @Environment(UserDataController.self) var userData
     
     var body: some View {
         VStack {
@@ -20,11 +21,11 @@ struct dashboard: View {
                 Text("Selamat pagi,")
                     .font(.title2)
                     .foregroundColor(.white)
-                Text("Dicky Dharma Susanto")
+                Text(userData.username)
                     .font(.title2)
                     .bold()
                     .foregroundColor(.white)
-                Text("Jumat, 21 Maret 2025")
+                Text(Date.now.formatted(date: .complete, time: .omitted))
                     .foregroundColor(.gray)
             }
             .padding()

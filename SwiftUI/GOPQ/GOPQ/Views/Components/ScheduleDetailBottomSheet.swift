@@ -43,7 +43,7 @@ fileprivate struct TimePicker: View {
     private let  minHour = 0
     private let  maxHour = 23
     private let  minMinute = 0
-    private let  maxMinute = 23
+    private let  maxMinute = 60
     
     var body: some View {
         HStack {
@@ -56,8 +56,8 @@ fileprivate struct TimePicker: View {
             Text(":")
                 .foregroundStyle(.white)
             Picker("Minute Picker",selection: $minute) {
-                ForEach(minHour...maxHour, id: \.self) { hour in
-                    Text("\(hour)")
+                ForEach(minMinute...maxMinute, id: \.self) { minute in
+                    Text("\(minute)")
                         .foregroundStyle(.white)
                 }
             }
