@@ -74,9 +74,8 @@ import SwiftData
                 context.insert(item)
             }
             try context.save()
-            print("✅ Batch insert complete")
         } catch {
-            print("❌ Failed to batch insert: \(error)")
+            print("Failed to batch insert: \(error)")
         }
     }
 }

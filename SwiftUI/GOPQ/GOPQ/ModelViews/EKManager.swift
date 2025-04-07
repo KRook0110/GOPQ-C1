@@ -12,20 +12,59 @@ import EventKit
 class EKManager {
     
     var showAlert: Bool = false
-    var messageTemp = "NotYet"
-    
+    var permissionGranted = false
+    let store = EKEventStore()
+    var calendar: EKCalendar = EKCalendar()
     
     init() {
-        let store = EKEventStore()
-        
         store.requestFullAccessToEvents { granted, err in
-            if granted {
-                self.messageTemp = "Granted"
+            self.permissionGranted = granted
+            if !granted {
+                self.showAlert = true
+                return
+            }
+        }
+        
+        let calendarID = UserDefaults.standard.string(forKey: "calendar") ?? ""
+        if calendarID.isEmpty  {
+            self.calendar = EKCalendar(for: .event, eventStore: store)
+            guard (try? store.saveCalendar(calendar, commit: true)) != nil else {
+                print("❌ Save Calendar Failed")
+                return
+            }
+        }
+        else {
+            if let foundCalendar = store.calendar(withIdentifier: calendarID) {
+                calendar = foundCalendar
             }
             else {
-                self.messageTemp = "Denied"
+                guard (try? store.saveCalendar(calendar, commit: true)) != nil else {
+                    print("❌ Save Calendar Failed")
+                    return
+                }
             }
-            
         }
     }
+    
+    func publishToCalendar(_ schedules: [ScheduleItemData]) {
+        
+        for schedule in schedules {
+            syncEventToSchedule(schedule)}
+        
+    }
+    func syncEventToSchedule(_ schedule: ScheduleItemData)  {
+        let newevent = EKEvent(eventStore: store)
+        newevent.title = schedule.location
+        newevent.notes = schedule.message
+        newevent.startDate = schedule.startTime
+        newevent.endDate = schedule.endTime
+        newevent.calendar = store.defaultCalendarForNewEvents
+        do {
+            try store.save(newevent, span: .thisEvent, commit: true)
+        }
+        catch {
+            print("Failed to save event : \(error)")
+        }
+    }
+    
 }

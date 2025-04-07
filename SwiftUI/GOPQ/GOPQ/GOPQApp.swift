@@ -18,12 +18,16 @@ struct GOPQApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                Text(ekmanager.messageTemp)
                 if userdata.username.isEmpty {
                     SplashScreen()
                 }
                 else {
                     home(schedule: .empty)
+                        .alert("Error", isPresented: $ekmanager.showAlert) {
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text("Kami tidak bisa access kalender anda, kami tidak akan dapat membuat event di kalender anda.")
+                        }
                 }
             }
         }
