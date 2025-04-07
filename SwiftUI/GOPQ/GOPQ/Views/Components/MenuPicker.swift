@@ -57,7 +57,6 @@ struct MenuPicker: View {
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .padding(.vertical, 6)
-                .padding(.horizontal, 12)
                 .background(.clear)
                 .cornerRadius(8)
             }

@@ -66,12 +66,6 @@ struct TimePicker: View {
                         .background(.clear)
                         .cornerRadius(10)
                         
-                        Button("Done") {
-                            withAnimation {
-                                activePicker = .none
-                            }
-                        }
-                        .padding(.top, 8)
                     }
                     .padding(.vertical, 8)
                 }
