@@ -14,9 +14,11 @@ struct GOPQApp: App {
     @State var csvController = CSVController()
     @State var observableScheduleController = ScheduleController()
     @State var userdata = UserData()
+    @State var ekmanager = EKManager()
     var body: some Scene {
         WindowGroup {
             Group {
+                Text(ekmanager.messageTemp)
                 if userdata.username.isEmpty {
                     SplashScreen()
                 }

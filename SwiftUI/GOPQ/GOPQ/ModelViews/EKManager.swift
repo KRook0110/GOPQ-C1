@@ -12,10 +12,20 @@ import EventKit
 class EKManager {
     
     var showAlert: Bool = false
+    var messageTemp = "NotYet"
+    
     
     init() {
-        var store = EKEventStore()
+        let store = EKEventStore()
+        
         store.requestFullAccessToEvents { granted, err in
+            if granted {
+                self.messageTemp = "Granted"
+            }
+            else {
+                self.messageTemp = "Denied"
+            }
+            
         }
     }
 }

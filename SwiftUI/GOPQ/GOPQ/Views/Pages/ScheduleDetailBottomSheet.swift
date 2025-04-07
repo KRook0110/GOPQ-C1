@@ -13,11 +13,22 @@ enum PickerOptions {
 }
 
 
+
 struct ScheduleDetailBottomSheet: View {
     
     var schedule: ScheduleItemData
     @Binding var isPresented: Bool
     
+    enum Fields {
+       case start
+       case end
+       case location
+       case messsage
+       case alert
+   }
+    
+    @FocusState private var focusInput: Fields?
+
     @State private var tempSchedule: ScheduleItemData
     @Environment(ScheduleController.self ) private var schedules
     @State private var pickerOption: PickerOptions = .start
@@ -65,8 +76,8 @@ struct ScheduleDetailBottomSheet: View {
             .padding(20)
                         
             Form {
-                TimePicker(label: "Starts", hour: $startHour, minute: $startMinute)
-                    
+                let x = TimePicker(label: "Starts", hour: $startHour, minute: $startMinute)
+                x
                 TimePicker(label: "Ends", hour: $endHour, minute: $endMinute)
                 
                 LabeledContent  {
@@ -77,6 +88,8 @@ struct ScheduleDetailBottomSheet: View {
                     .multilineTextAlignment(.trailing)
                 } label:  {
                     Text("Location")
+                }
+                .onTapGesture {
                 }
                 
                 LabeledContent  {

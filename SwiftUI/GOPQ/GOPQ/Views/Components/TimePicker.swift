@@ -44,6 +44,10 @@ struct TimePicker: View {
     @Binding var minute: Int
     @State private var isPickerVisible: Bool = false
     
+    func turnofPicker() {
+        isPickerVisible = false
+    }
+    
     var body: some View {
         VStack( spacing: 0) {
             LabeledContent {
