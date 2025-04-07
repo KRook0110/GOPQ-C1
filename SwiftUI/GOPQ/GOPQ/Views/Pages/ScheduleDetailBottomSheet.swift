@@ -30,6 +30,8 @@ struct ScheduleDetailBottomSheet: View {
     @State private var endHour: Int = 0
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
+    @State private var selectedTime: Date = Date()
+    @State private var menuOption: MenuOption = .none
 
     init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
@@ -41,7 +43,6 @@ struct ScheduleDetailBottomSheet: View {
     
     var body: some View {
         VStack {
-            Text("\(startHour) : \(startMinute) ")
             
             HStack(alignment: .top) {
                 Button {
@@ -63,23 +64,12 @@ struct ScheduleDetailBottomSheet: View {
                 }
             }
             .padding(20)
-            
-            Picker("Start or End", selection: $pickerOption) {
-                Text("Start").tag(PickerOptions.start)
-                Text("End").tag(PickerOptions.end)
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 200)
-            .preferredColorScheme(.dark)
-            
-            switch pickerOption {
-            case .start:
-                TimePicker(hour: $startHour, minute: $startMinute)
-            case .end:
-                TimePicker(hour: $endHour, minute: $endMinute)
-            }
-            
+                        
             Form {
+                TimePicker(label: "Starts", hour: $startHour, minute: $startMinute)
+                    
+                TimePicker(label: "Ends", hour: $endHour, minute: $endMinute)
+                
                 LabeledContent  {
                     TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
                         Text("Location")
@@ -99,7 +89,10 @@ struct ScheduleDetailBottomSheet: View {
                 } label:  {
                     Text("Message")
                 }
-            }
+                
+                MenuPicker(label: "Alert", selectedOption: $menuOption)
+                
+            }.frame(minHeight: 550)
             
             Form {
                 Button {
@@ -117,7 +110,7 @@ struct ScheduleDetailBottomSheet: View {
                 
             }
             Spacer()
-        }
+        }.preferredColorScheme(.dark)
         .onDisappear {
             if removeSchedule {
                 withAnimation(.easeInOut) {
@@ -150,9 +143,6 @@ struct ScheduleDetailBottomSheet: View {
     }
 }
      
-
-
-
 #Preview {
     ZStack {
         Rectangle()
