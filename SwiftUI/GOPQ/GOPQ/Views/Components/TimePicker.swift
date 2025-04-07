@@ -27,8 +27,8 @@ struct TimePicker: View {
             Text(":")
                 .foregroundStyle(.white)
             Picker("Minute Picker",selection: $minute) {
-                ForEach(minMinute...maxMinute, id: \.self) { hour in
-                    Text("\(hour)")
+                ForEach(minMinute...maxMinute, id: \.self) { min in
+                    Text("\(min)")
                         .foregroundStyle(.white)
                 }
             }

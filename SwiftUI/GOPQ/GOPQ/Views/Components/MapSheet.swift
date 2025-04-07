@@ -69,19 +69,7 @@ struct MapSheet: View {
                                         .clipShape(Circle())
                                 }.padding()
                             }
-
-                            Image(selectedImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .scaleEffect(1 + currentAmount)
-                                .gesture(
-                                    MagnificationGesture().onChanged { value in
-                                        currentAmount = value - 1
-                                    }
-                                        .onEnded { value in withAnimation(.spring()) { currentAmount = 0 }
-                                        }
-                                )
+                            ZoomableImage(imageName: selectedImage)
                         }
                     )
                     .transition(.opacity)

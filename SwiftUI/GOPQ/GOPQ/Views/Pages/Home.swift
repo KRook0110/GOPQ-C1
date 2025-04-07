@@ -26,7 +26,7 @@ struct home: View {
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
-                    Text("Jumat, 21 Maret 2025")
+                    Text(Date.now.formatted(date: .complete, time: .omitted))
                         .foregroundColor(.gray)
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)

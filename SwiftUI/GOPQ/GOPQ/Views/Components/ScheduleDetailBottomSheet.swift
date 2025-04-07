@@ -13,6 +13,7 @@ enum PickerOptions {
 }
 
 
+
 struct ScheduleDetailBottomSheet: View {
     
     var schedule: ScheduleItemData
@@ -50,8 +51,6 @@ struct ScheduleDetailBottomSheet: View {
                 }
                 Spacer()
                 Button {
-                    
-                     
                     if startHour < endHour || startHour == endHour && startMinute < endMinute {
                         isPresented = false
                         saveSchedule = true
