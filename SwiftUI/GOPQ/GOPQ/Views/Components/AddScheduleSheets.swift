@@ -86,22 +86,6 @@ struct AddScheduleSheets: View {
                 MenuPicker(label: "Alert", selectedOption: $menuOption)
                 
             }.frame(minHeight: 550)
-            
-            Form {
-                Button {
-                    showAddScheduleSheets = false
-                    removeSchedule = true
-                } label: {
-                    HStack{
-                        Spacer()
-                        Text("Delete Schedule")
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                        Spacer()
-                    }
-                }
-                
-            }
             Spacer()
         }.preferredColorScheme(.dark)
         .onDisappear {
@@ -115,7 +99,7 @@ struct AddScheduleSheets: View {
                 tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
                 
                 withAnimation(.easeInOut)  {
-                    schedules.update(target: tempSchedule)
+                    schedules.add(newSchedule: tempSchedule)
                 }
             }
         }

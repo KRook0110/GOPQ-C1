@@ -35,6 +35,13 @@ import SwiftData
         return lhs.startTime < rhs.startTime
     }
     
+    func add(newSchedule: ScheduleItemData) {
+        var schedule = newSchedule
+        schedule.id = UUID()
+        
+        data.append(schedule)
+    }
+    
     func insert(_ item:ScheduleItemData) { // fucking slow when adding many values, sorry guys
         for i in 0..<data.count {
             if !compare(data[i], item ) {
