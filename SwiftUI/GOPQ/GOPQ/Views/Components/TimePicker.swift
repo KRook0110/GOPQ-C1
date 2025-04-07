@@ -6,54 +6,24 @@
 //
 import SwiftUI
 
-
-//struct TimePicker: View {
-//    @Binding var hour: Int;
-//    @Binding var minute: Int
-//    
-//    private let  minHour = 0
-//    private let  maxHour = 23
-//    private let  minMinute = 0
-//    private let  maxMinute = 59
-//    
-//    var body: some View {
-//        HStack {
-//            Picker("Hour Picker",selection: $hour) {
-//                ForEach(minHour...maxHour, id: \.self) { hour in
-//                    Text("\(hour)")
-//                        .foregroundStyle(.white)
-//                }
-//            }
-//            Text(":")
-//                .foregroundStyle(.white)
-//            Picker("Minute Picker",selection: $minute) {
-//                ForEach(minMinute...maxMinute, id: \.self) { min in
-//                    Text("\(min)")
-//                        .foregroundStyle(.white)
-//                }
-//            }
-//        }
-//        .pickerStyle(.wheel)
-//        .frame(width: 200)
-//    }
-//}
-
 struct TimePicker: View {
+    
     let label: String
+    let id: PickerOptions
+    @Binding var activePicker: PickerOptions
     @Binding var hour: Int
     @Binding var minute: Int
-    @State private var isPickerVisible: Bool = false
     
-    func turnofPicker() {
-        isPickerVisible = false
+    var isPickerVisible: Bool {
+        activePicker == id
     }
-    
+
     var body: some View {
         VStack( spacing: 0) {
             LabeledContent {
                 Button(action: {
                     withAnimation {
-                        isPickerVisible.toggle()
+                        activePicker = (activePicker == id) ? .none : id
                     }
                 }) {
                     Text(String(format: "%02d:%02d", hour, minute))
@@ -96,12 +66,6 @@ struct TimePicker: View {
                         .background(.clear)
                         .cornerRadius(10)
                         
-                        Button("Done") {
-                            withAnimation {
-                                isPickerVisible = false
-                            }
-                        }
-                        .padding(.top, 8)
                     }
                     .padding(.vertical, 8)
                 }

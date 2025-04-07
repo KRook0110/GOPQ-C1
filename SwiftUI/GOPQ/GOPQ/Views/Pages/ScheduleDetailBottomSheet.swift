@@ -10,15 +10,12 @@ import SwiftUI
 enum PickerOptions {
     case start
     case end
+    case none
 }
 
-
-
 struct ScheduleDetailBottomSheet: View {
-    
     var schedule: ScheduleItemData
     @Binding var isPresented: Bool
-    
     enum Fields {
        case start
        case end
@@ -30,135 +27,123 @@ struct ScheduleDetailBottomSheet: View {
     @FocusState private var focusInput: Fields?
 
     @State private var tempSchedule: ScheduleItemData
-    @Environment(ScheduleController.self ) private var schedules
+    @Environment(ScheduleController.self) private var schedules
     @State private var pickerOption: PickerOptions = .start
     @State private var removeSchedule: Bool = false
     @State private var saveSchedule: Bool = false
-    
+
     @State private var startHour: Int = 0
     @State private var startMinute: Int = 0
     @State private var endHour: Int = 0
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
-    @State private var selectedTime: Date = Date()
     @State private var menuOption: MenuOption = .none
 
-    init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
+    init(sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
         self._isPresented = isPresented
-        self.tempSchedule = schedule
-        
-    
+        self._tempSchedule = State(initialValue: schedule)
     }
-    
+
     var body: some View {
         VStack {
-            
-            HStack(alignment: .top) {
-                Button {
-                    isPresented = false
-                } label: {
+            HStack {
+                Button { isPresented = false } label: {
                     Text("Cancel")
                 }
                 Spacer()
                 Button {
-                    if startHour < endHour || startHour == endHour && startMinute < endMinute {
+                    if startHour < endHour || (startHour == endHour && startMinute < endMinute) {
                         isPresented = false
                         saveSchedule = true
-                    }
-                    else {
+                    } else {
                         showAlert = true
                     }
                 } label: {
                     Text("Save")
                 }
             }
-            .padding(20)
-                        
-            Form {
-                let x = TimePicker(label: "Starts", hour: $startHour, minute: $startMinute)
-                x
-                TimePicker(label: "Ends", hour: $endHour, minute: $endMinute)
-                
-                LabeledContent  {
-                    TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
-                        Text("Location")
-                    }
-                    .foregroundStyle(.white.opacity(0.7))
-                    .multilineTextAlignment(.trailing)
-                } label:  {
-                    Text("Location")
-                }
-                .onTapGesture {
-                }
-                
-                LabeledContent  {
-                    TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
-                        Text("Message")
-                    }
-                    .foregroundStyle(.white.opacity(0.7))
-                    .multilineTextAlignment(.trailing)
-                } label:  {
-                    Text("Message")
-                }
-                
-                MenuPicker(label: "Alert", selectedOption: $menuOption)
-                
-            }.frame(minHeight: 550)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 20)
             
-            Form {
-                Button {
-                    isPresented = false
-                    removeSchedule = true
-                } label: {
-                    HStack{
-                        Spacer()
+            ScrollView {
+                VStack(spacing: 0) {
+                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
+                        .background(.darkGray)
+                        .cornerRadius(10)
+                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
+                        .background(.darkGray)
+                    LabeledContent {
+                        TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
+                            Text("Location")
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.trailing)
+                    } label: {
+                        Text("Location")
+                    }.padding()
+                    .background(.darkGray)
+                    LabeledContent {
+                        TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
+                            Text("Message")
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.trailing)
+                    } label: {
+                        Text("Message")
+                    }.padding()
+                    .background(.darkGray)
+                    MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
+                        .background(.darkGray)
+                    Divider().background(Color.white.opacity(0.3))
+
+                    Button(role: .destructive) {
+                        isPresented = false
+                        removeSchedule = true
+                    } label: {
                         Text("Delete Schedule")
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                        Spacer()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .foregroundColor(.red)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(12)
                     }
                 }
-                
+                .padding()
             }
+
             Spacer()
         }
-        .onTapGesture {
-            
-            
-        }
+        .background(Color.black.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .onDisappear {
             if removeSchedule {
-                withAnimation(.easeInOut) {
-                    schedules.remove(id: schedule.id)
-                }
+                schedules.remove(id: schedule.id)
             }
             if saveSchedule {
                 tempSchedule.startTime = makeTime(hour: startHour, min: startMinute)
                 tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
-                
-                withAnimation(.easeInOut)  {
-                    schedules.update(target: tempSchedule)
-                }
+                schedules.update(target: tempSchedule)
             }
         }
         .onAppear {
-            let startTimeCompnents = Calendar.current.dateComponents([.hour, .minute], from: schedule.startTime )
-            let endTimeComponents = Calendar.current.dateComponents([.hour, .minute], from: schedule.endTime )
+            let start = Calendar.current.dateComponents([.hour, .minute], from: schedule.startTime)
+            let end = Calendar.current.dateComponents([.hour, .minute], from: schedule.endTime)
 
-            startHour = startTimeCompnents.hour ?? 0
-            startMinute = startTimeCompnents.minute ?? 0
-            endHour = endTimeComponents.hour ?? 0
-            endMinute = endTimeComponents.minute ?? 0
+            startHour = start.hour ?? 0
+            startMinute = start.minute ?? 0
+            endHour = end.hour ?? 0
+            endMinute = end.minute ?? 0
         }
-        .alert("error", isPresented: $showAlert) {
+        .alert("Error", isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
         } message: {
             Text("Shift awal kamu lebih besar dari shift akhirnya")
         }
-        
     }
 }
+
+
      
 #Preview {
     ZStack {
