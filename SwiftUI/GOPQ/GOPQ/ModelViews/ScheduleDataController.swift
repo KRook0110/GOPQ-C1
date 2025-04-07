@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
+@MainActor
 @Observable class ScheduleController {
     var data: [ScheduleItemData]
     
     init() {
         self.data = []
+        let context = ModelManager.shared.mainContext
+        let results = (try? context.fetch(FetchDescriptor<ScheduleItemData>())) ?? []
+        self.set(results)
     }
     
     init(_ source: [ScheduleItemData]) {
@@ -25,7 +30,7 @@ import SwiftUI
             compare(lhs, rhs)
         }
     }
-
+    
     func compare(_ lhs:ScheduleItemData, _ rhs:ScheduleItemData) -> Bool {
         return lhs.startTime < rhs.startTime
     }
@@ -55,5 +60,24 @@ import SwiftUI
         data.removeAll(where: { $0.id == id})
     }
     
+    
+    func saveToSwiftData() {
+        let context = ModelManager.shared.mainContext
+        let descriptor = FetchDescriptor<ScheduleItemData>()
+        
+        do {
+            let allItems = try context.fetch(descriptor)
+            for item in allItems {
+                context.delete(item)
+            }
+            for item in data {
+                context.insert(item)
+            }
+            try context.save()
+            print("✅ Batch insert complete")
+        } catch {
+            print("❌ Failed to batch insert: \(error)")
+        }
+    }
 }
 

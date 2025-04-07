@@ -6,15 +6,27 @@
 //
 
 import Foundation
+import SwiftData
 
-struct ScheduleItemData : Identifiable{
-    let id = UUID()
+@Model
+class ScheduleItemData : Identifiable{
+    var id: UUID
     var employeeName: String
     var startTime: Date
     var endTime: Date
     var location: String
     var message: String
     var soundName: String
+    
+    init(employeeName: String, startTime: Date, endTime: Date, location: String, message: String, soundName: String) {
+        self.id = UUID()
+        self.employeeName = employeeName
+        self.startTime = startTime
+        self.endTime = endTime
+        self.location = location
+        self.message = message
+        self.soundName = soundName
+    }
     
     func getStartTimeFormat() -> String {
         return formatDate(startTime)
