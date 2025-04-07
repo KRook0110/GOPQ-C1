@@ -61,7 +61,12 @@ struct ScheduleDetailBottomSheet: View {
                 VStack(spacing: 0) {
                     TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
                         .background(.darkGray)
-                        .cornerRadius(10)
+                        .clipShape(
+                            .rect(
+                                topLeadingRadius: 15,
+                                topTrailingRadius: 15
+                            )
+                        )
                     TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
                         .background(.darkGray)
                     LabeledContent {
@@ -86,6 +91,12 @@ struct ScheduleDetailBottomSheet: View {
                     .background(.darkGray)
                     MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
                         .background(.darkGray)
+                        .clipShape(
+                            .rect(
+                                bottomLeadingRadius: 15,
+                                bottomTrailingRadius: 15
+                            )
+                        )
                     Divider().background(Color.white.opacity(0.3))
 
                     Button(role: .destructive) {
