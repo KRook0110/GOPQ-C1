@@ -13,7 +13,6 @@ enum PickerOptions {
 }
 
 
-
 struct ScheduleDetailBottomSheet: View {
     
     var schedule: ScheduleItemData
@@ -30,6 +29,7 @@ struct ScheduleDetailBottomSheet: View {
     @State private var endHour: Int = 0
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
+    
 
     init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
@@ -117,6 +117,9 @@ struct ScheduleDetailBottomSheet: View {
                 
             }
             Spacer()
+        }
+        .onTapGesture {
+            
         }
         .onDisappear {
             if removeSchedule {
