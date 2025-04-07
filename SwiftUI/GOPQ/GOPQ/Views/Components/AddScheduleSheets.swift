@@ -99,7 +99,7 @@ struct AddScheduleSheets: View {
                 tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
                 
                 withAnimation(.easeInOut)  {
-                    schedules.add(newSchedule: tempSchedule)
+                    schedules.insert(tempSchedule)
                 }
             }
         }

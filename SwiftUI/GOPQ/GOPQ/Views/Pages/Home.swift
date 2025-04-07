@@ -34,23 +34,23 @@ struct home: View {
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                    ScheduleList()
-                
-                Button {showAddScheduleSheets = true } label: {
-                    Image(systemName: "plus.circle")
-                        .resizable()
-                        .font(.system(size: 35))
-                        .foregroundColor(.blue)
-                        .frame(width: 30, height: 35)
-                        .padding()
-                    
-                }
-                .sheet(isPresented: $showAddScheduleSheets) {
-                    AddScheduleSheets(sheetControl: $showAddScheduleSheets, schedule: .empty)
-                }
-                    
+                ScheduleList()
                 Spacer()
-                
+                HStack{
+                    Spacer()
+                    Button {showAddScheduleSheets = true } label: {
+                        Image(systemName: "plus.circle")
+                            .resizable()
+                            .font(.system(size: 35))
+                            .foregroundColor(.blue)
+                            .frame(width: 50, height:50)
+                            .padding(25)
+                    }
+                    .sheet(isPresented: $showAddScheduleSheets) {
+                        AddScheduleSheets(sheetControl: $showAddScheduleSheets, schedule: .empty)
+                    }
+                }
+
             }
         }
     }
