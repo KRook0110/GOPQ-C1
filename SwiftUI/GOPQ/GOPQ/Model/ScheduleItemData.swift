@@ -53,3 +53,23 @@ func makeTime(hour: Int, min: Int ) -> Date {
     return Calendar.current.startOfDay(for: Date())
 }
 
+extension Date {
+    static var notSet: Date {
+        Calendar.current.date(from: DateComponents(year: 1970, month: 1, day: 1))!
+    }
+}
+
+extension ScheduleItemData {
+    static var empty: ScheduleItemData {
+        ScheduleItemData(
+            employeeName: "",
+            startTime: .notSet,
+            endTime: .notSet,
+            location: "",
+            message: "",
+            soundName: ""
+        )
+    }
+}
+
+
