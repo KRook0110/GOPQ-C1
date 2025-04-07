@@ -10,23 +10,34 @@ import Foundation
 struct ScheduleItemData : Identifiable{
     let id = UUID()
     var employeeName: String
-    var startTimeHour: Int
-    var startTimeMin: Int
-    var endTimeHour: Int
-    var endTimeMin: Int
+    var startTime: Date
+    var endTime: Date
     var location: String
     var message: String
     var soundName: String
     
     func getStartTimeFormat() -> String {
-        return "\(leadingZero(startTimeHour)):\(leadingZero(startTimeMin))"
+        return formatDate(startTime)
     }
     func getEndTimeFormat() -> String {
-        return "\(leadingZero(endTimeHour)):\(leadingZero(endTimeMin))"
+        return formatDate(endTime)
     }
     
-    private func leadingZero(_ num: Int) -> String {
-        return String(format: "%02d", num)
+    private func formatDate(_ date: Date ) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
     }
+    
+}
+
+func makeTime(hour: Int, min: Int ) -> Date {
+    var componenents = Calendar.current.dateComponents([.year,.month,.day],from: Date())
+    componenents.hour = hour
+    componenents.minute = min
+    if let finaldate = Calendar.current.date(from: componenents) {
+        return finaldate
+    }
+    return Calendar.current.startOfDay(for: Date())
 }
 

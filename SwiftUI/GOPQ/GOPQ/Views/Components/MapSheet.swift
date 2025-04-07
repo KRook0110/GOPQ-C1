@@ -10,17 +10,17 @@ import SwiftUI
 struct MapSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedImage: String? = nil
-    
+
     @State private var currentAmount:CGFloat = 0
     @State private var lastAmount:CGFloat = 0
-    
-    
+
+
     let images = ["GOP Map", "GOP Map"]
-    
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            
+
             VStack(spacing: 20) {
                 HStack {
                     Spacer()
@@ -35,7 +35,7 @@ struct MapSheet: View {
                     }
                     .padding()
                 }
-                
+
                 VStack(spacing: 20) {
                     ForEach(images, id: \.self) { imageName in
                         Image(imageName)
@@ -48,10 +48,10 @@ struct MapSheet: View {
                     }
                 }
                 .padding()
-                
+
                 Spacer()
             }
-            
+
             if let selectedImage = selectedImage {
                 Color.black.opacity(0.9)
                     .ignoresSafeArea()

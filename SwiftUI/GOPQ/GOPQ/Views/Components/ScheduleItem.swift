@@ -60,10 +60,8 @@ struct ScheduleItem: View {
                 schedule: 
                     ScheduleItemData(
                         employeeName: "James",
-                        startTimeHour: 10,
-                        startTimeMin: 20,
-                        endTimeHour: 13,
-                        endTimeMin: 10,
+                        startTime: makeTime(hour: 10, min: 20),
+                        endTime: makeTime(hour: 11, min: 30 ),
                         location: "Lobby 1",
                         message: "Hi hello",
                         soundName: "System.something"

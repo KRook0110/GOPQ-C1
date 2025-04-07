@@ -11,30 +11,24 @@ import Foundation
 fileprivate var schedules : [ScheduleItemData] = [
     ScheduleItemData(
         employeeName: "Testing Person",
-        startTimeHour: 10,
-        startTimeMin: 20,
-        endTimeHour: 13,
-        endTimeMin: 10,
+        startTime: makeTime(hour: 8, min: 20 ),
+        endTime: makeTime(hour: 10, min: 40),
         location: "Lobby 1",
         message: "Hi hello",
         soundName: "System.something"
     ),
     ScheduleItemData(
         employeeName: "Testing Person",
-        startTimeHour: 15,
-        startTimeMin: 20,
-        endTimeHour: 19,
-        endTimeMin: 20,
+        startTime: makeTime(hour: 20, min: 10 ),
+        endTime: makeTime(hour: 24, min: 20),
         location: "Pantry",
         message: "Hello Hi",
         soundName: "System.something"
     ),
     ScheduleItemData(
         employeeName: "Testing Person",
-        startTimeHour: 8,
-        startTimeMin: 10,
-        endTimeHour: 15,
-        endTimeMin: 20,
+        startTime: makeTime(hour: 15, min: 10 ),
+        endTime: makeTime(hour: 18, min: 20),
         location: "Pantry",
         message: "Hello Hi",
         soundName: "System.something"
@@ -45,12 +39,12 @@ struct EnvironmentalTemp<Content: View>: View  {
     let content: () -> Content
     @State var csvController: CSVController
     @State var observableScheduleList: ScheduleController
-    @State var userData: UserDataController
+    @State var userData: UserData
     
     init(empty: Bool = false, @ViewBuilder content: @escaping () -> Content )  {
         self.content = content
         self.csvController = CSVController()
-        self.userData = UserDataController()
+        self.userData = UserData()
         if empty {
             self.observableScheduleList = ScheduleController()
         }
@@ -70,6 +64,7 @@ struct EnvironmentalTemp<Content: View>: View  {
                 content()
                     .environment(csvController)
                     .environment(observableScheduleList)
+                    .environment(userData) 
 //            }
         }
     }

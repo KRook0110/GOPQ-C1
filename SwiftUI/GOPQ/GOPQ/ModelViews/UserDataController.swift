@@ -6,9 +6,17 @@
 //
 
 import Foundation
-import SwiftUI
+import SwiftData
 
 @Observable
-class UserDataController {
-    var username: String = ""
+class UserData {
+    var username: String {
+        didSet {
+            UserDefaults.standard.set(username, forKey: "username")
+        }
+    }
+    
+    init() {
+        username = UserDefaults.standard.string(forKey: "username") ?? ""
+    }
 }

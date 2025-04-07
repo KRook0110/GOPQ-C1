@@ -12,60 +12,6 @@ enum PickerOptions {
     case end
 }
 
-fileprivate struct BottomSheetNavigationBar: View {
-    @Environment(ScheduleController.self) var schedules
-    @Binding var isPresented: Bool
-    @Binding var saveSchedule: Bool
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            Button {
-                isPresented = false
-            } label: {
-                Text("Cancel")
-            }
-            Spacer()
-            Button {
-                isPresented = false
-                saveSchedule = true
-            } label: {
-                Text("Save")
-            }
-        }
-        .padding(20)
-    }
-}
-
-fileprivate struct TimePicker: View {
-    @Binding var hour: Int
-    @Binding var minute : Int
-    
-    private let  minHour = 0
-    private let  maxHour = 23
-    private let  minMinute = 0
-    private let  maxMinute = 60
-    
-    var body: some View {
-        HStack {
-            Picker("Hour Picker",selection: $hour) {
-                ForEach(minHour...maxHour, id: \.self) { hour in
-                    Text("\(hour)")
-                        .foregroundStyle(.white)
-                }
-            }
-            Text(":")
-                .foregroundStyle(.white)
-            Picker("Minute Picker",selection: $minute) {
-                ForEach(minMinute...maxMinute, id: \.self) { minute in
-                    Text("\(minute)")
-                        .foregroundStyle(.white)
-                }
-            }
-        }
-        .pickerStyle(.wheel)
-        .frame(width: 200)
-    }
-}
 
 
 struct ScheduleDetailBottomSheet: View {
@@ -79,15 +25,45 @@ struct ScheduleDetailBottomSheet: View {
     @State private var removeSchedule: Bool = false
     @State private var saveSchedule: Bool = false
     
+    @State private var startHour: Int = 0
+    @State private var startMinute: Int = 0
+    @State private var endHour: Int = 0
+    @State private var endMinute: Int = 0
+    @State private var showAlert: Bool = false
+
     init (sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
         self._isPresented = isPresented
         self.tempSchedule = schedule
+        
+    
     }
     
     var body: some View {
         VStack {
-            BottomSheetNavigationBar(isPresented: $isPresented, saveSchedule: $saveSchedule)
+            Text("\(startHour) : \(startMinute) ")
+            
+            HStack(alignment: .top) {
+                Button {
+                    isPresented = false
+                } label: {
+                    Text("Cancel")
+                }
+                Spacer()
+                Button {
+                    if startHour < endHour || startHour == endHour && startMinute < endMinute {
+                        isPresented = false
+                        saveSchedule = true
+                    }
+                    else {
+                        showAlert = true
+                    }
+                } label: {
+                    Text("Save")
+                }
+            }
+            .padding(20)
+            
             Picker("Start or End", selection: $pickerOption) {
                 Text("Start").tag(PickerOptions.start)
                 Text("End").tag(PickerOptions.end)
@@ -98,9 +74,9 @@ struct ScheduleDetailBottomSheet: View {
             
             switch pickerOption {
             case .start:
-                TimePicker(hour: $tempSchedule.startTimeHour, minute: $tempSchedule.startTimeMin)
+                TimePicker(hour: $startHour, minute: $startMinute)
             case .end:
-                TimePicker(hour: $tempSchedule.endTimeHour, minute: $tempSchedule.endTimeMin)
+                TimePicker(hour: $endHour, minute: $endMinute)
             }
             
             Form {
@@ -149,11 +125,28 @@ struct ScheduleDetailBottomSheet: View {
                 }
             }
             if saveSchedule {
+                tempSchedule.startTime = makeTime(hour: startHour, min: startMinute)
+                tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
+                
                 withAnimation(.easeInOut)  {
                     schedules.update(target: tempSchedule)
                 }
             }
         }
+        .onAppear {
+            let startTimeCompnents = Calendar.current.dateComponents([.hour, .minute], from: schedule.startTime )
+            let endTimeComponents = Calendar.current.dateComponents([.hour, .minute], from: schedule.endTime )
+
+            startHour = startTimeCompnents.hour ?? 0
+            startMinute = startTimeCompnents.minute ?? 0
+            endHour = endTimeComponents.hour ?? 0
+            endMinute = endTimeComponents.minute ?? 0
+        }
+        .alert("error", isPresented: $showAlert) {
+        } message: {
+            Text("Shift awal kamu lebih besar dari shift akhirnya")
+        }
+        
     }
 }
      
@@ -168,10 +161,8 @@ struct ScheduleDetailBottomSheet: View {
         EnvironmentalTemp {
             ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
                 employeeName: "John Doe",
-                startTimeHour: 10,
-                startTimeMin: 20,
-                endTimeHour: 13,
-                endTimeMin: 10,
+                startTime: makeTime(hour: 10, min: 20),
+                endTime: makeTime(hour: 20, min: 30),
                 location: "Lobby 1",
                 message: "Hi hello",
                 soundName: "System.something"
