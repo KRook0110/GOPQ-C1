@@ -40,7 +40,7 @@ struct EnvironmentalTemp<Content: View>: View  {
     @State var csvController: CSVController
     @State var observableScheduleList: ScheduleController
     @State var userData: UserData
-    
+
     init(empty: Bool = false, @ViewBuilder content: @escaping () -> Content )  {
         self.content = content
         self.csvController = CSVController()
@@ -64,7 +64,7 @@ struct EnvironmentalTemp<Content: View>: View  {
                 content()
                     .environment(csvController)
                     .environment(observableScheduleList)
-                    .environment(userData) 
+                    .environment(userData)
 //            }
         }
     }

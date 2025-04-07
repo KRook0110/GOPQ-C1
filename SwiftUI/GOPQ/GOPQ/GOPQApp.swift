@@ -14,7 +14,6 @@ struct GOPQApp: App {
     @State var csvController = CSVController()
     @State var observableScheduleController = ScheduleController()
     @State var userdata = UserData()
-    @State var ekmanager = EKManager()
     var body: some Scene {
         WindowGroup {
             Group {
@@ -23,16 +22,16 @@ struct GOPQApp: App {
                 }
                 else {
                     home(schedule: .empty)
-                        .alert("Error", isPresented: $ekmanager.showAlert) {
-                            Button("OK", role: .cancel) {}
-                        } message: {
-                            Text("Kami tidak bisa access kalender anda, kami tidak akan dapat membuat event di kalender anda.")
-                        }
+//                        .alert("Error", isPresented: $observableScheduleController.ekmanager.showAlert) {
+//                            Button("OK", role: .cancel) {}
+//                        } message: {
+//                            Text("Kami tidak bisa access kalender anda, kami tidak akan dapat membuat event di kalender anda.")
+//                        }
                 }
             }
         }
         .onChange(of: scenePhase, initial: false)  {
-            if scenePhase == .background {
+            if scenePhase == .background || scenePhase == .inactive {
                 observableScheduleController.saveToSwiftData()
             }
         }

@@ -19,6 +19,7 @@ class ScheduleItemData : Identifiable{
     var message: String
     var soundName: String
     var eventID: String = ""
+    var alertOffset: Int = 0
     
     init(employeeName: String, startTime: Date, endTime: Date, location: String, message: String, soundName: String) {
         self.id = UUID()

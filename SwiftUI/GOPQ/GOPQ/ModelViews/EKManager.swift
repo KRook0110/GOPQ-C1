@@ -7,6 +7,7 @@
 
 import Foundation
 import EventKit
+import UIKit
 
 @Observable
 class EKManager {
@@ -14,9 +15,12 @@ class EKManager {
     var showAlert: Bool = false
     var permissionGranted = false
     let store = EKEventStore()
-    var calendar: EKCalendar = EKCalendar()
+    var calendar: EKCalendar
     
     init() {
+        
+        calendar = store.defaultCalendarForNewEvents! // saya bingung sendiri sama sourcenya
+        // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
         store.requestFullAccessToEvents { granted, err in
             self.permissionGranted = granted
             if !granted {
@@ -25,45 +29,49 @@ class EKManager {
             }
         }
         
-        let calendarID = UserDefaults.standard.string(forKey: "calendar") ?? ""
-        if calendarID.isEmpty  {
-            self.calendar = EKCalendar(for: .event, eventStore: store)
-            guard (try? store.saveCalendar(calendar, commit: true)) != nil else {
-                print("❌ Save Calendar Failed")
-                return
-            }
-        }
-        else {
-            if let foundCalendar = store.calendar(withIdentifier: calendarID) {
-                calendar = foundCalendar
-            }
-            else {
-                guard (try? store.saveCalendar(calendar, commit: true)) != nil else {
-                    print("❌ Save Calendar Failed")
-                    return
-                }
-            }
-        }
+        
     }
     
-    func publishToCalendar(_ schedules: [ScheduleItemData]) {
+    // returns event identifier
+    func syncEvent(_ schedule: ScheduleItemData) {
         
-        for schedule in schedules {
-            syncEventToSchedule(schedule)}
+        var targetevent: EKEvent
+        if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
+            targetevent = event
+        }
+        else { // create new event
+            targetevent = EKEvent(eventStore: store)
+        }
         
-    }
-    func syncEventToSchedule(_ schedule: ScheduleItemData)  {
-        let newevent = EKEvent(eventStore: store)
-        newevent.title = schedule.location
-        newevent.notes = schedule.message
-        newevent.startDate = schedule.startTime
-        newevent.endDate = schedule.endTime
-        newevent.calendar = store.defaultCalendarForNewEvents
+        targetevent.location = schedule.location
+        targetevent.title = schedule.message
+        targetevent.notes = "This is a gopq auto generated event"
+        targetevent.startDate = schedule.startTime
+        targetevent.endDate = schedule.endTime
+        targetevent.calendar = store.defaultCalendarForNewEvents
+//        print("before : ", targetevent.eventIdentifier ?? "nil")
         do {
-            try store.save(newevent, span: .thisEvent, commit: true)
+            try store.save(targetevent, span: .thisEvent, commit: true)
         }
         catch {
             print("Failed to save event : \(error)")
+        }
+//        print("after : ", targetevent.eventIdentifier ?? "nil")
+        schedule.eventID = targetevent.eventIdentifier ?? ""
+    }
+    
+    func removeEvent(_ schedule: ScheduleItemData) {
+        if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
+            do {
+                try store.remove(event, span: .thisEvent)
+                print("remove event successful \(event.title ?? "no title") ")
+            }
+            catch {
+                print("failed to remove event : \(error)")
+            }
+        }
+        else {
+            print("no event found")
         }
     }
     

@@ -106,6 +106,9 @@ struct ScheduleDetailBottomSheet: View {
                                 bottomTrailingRadius: 15
                             )
                         )
+                        .onChange(of: menuOption) {
+                            tempSchedule.alertOffset = menuOption.minutes
+                        }
                     Divider().background(Color.white.opacity(0.3))
 
                     Button(role: .destructive) {
