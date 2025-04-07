@@ -57,36 +57,63 @@ struct AddScheduleSheets: View {
                 }
             }
             .padding(20)
-                        
-            Form {
-                TimePicker(label: "Starts", id: .start, activePicker: $activePicker, hour: $startHour, minute: $startMinute)
-                    
-                TimePicker(label: "Ends", id: .end, activePicker: $activePicker, hour: $endHour, minute: $endMinute)
-                
-                LabeledContent  {
-                    TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
+                        .background(.darkGray)
+                        .clipShape(
+                            .rect(
+                                topLeadingRadius: 15,
+                                topTrailingRadius: 15
+                            )
+                        )
+                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
+                        .background(.darkGray)
+                    LabeledContent {
+                        TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
+                            Text("Location")
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.trailing)
+                    } label: {
                         Text("Location")
-                    }
-                    .foregroundStyle(.white.opacity(0.7))
-                    .multilineTextAlignment(.trailing)
-                } label:  {
-                    Text("Location")
-                }
-                
-                LabeledContent  {
-                    TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
+                    }.padding()
+                    .background(.darkGray)
+                    LabeledContent {
+                        TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
+                            Text("Message")
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.trailing)
+                    } label: {
                         Text("Message")
+                    }.padding()
+                    .background(.darkGray)
+                    MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
+                        .background(.darkGray)
+                        .clipShape(
+                            .rect(
+                                bottomLeadingRadius: 15,
+                                bottomTrailingRadius: 15
+                            )
+                        )
+                    Divider().background(Color.white.opacity(0.3))
+
+                    Button(role: .destructive) {
+                        showAddScheduleSheets = false
+                        removeSchedule = true
+                    } label: {
+                        Text("Delete Schedule")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .foregroundColor(.red)
+                            .background(Color.white.opacity(0.05))
+                            .cornerRadius(12)
                     }
-                    .foregroundStyle(.white.opacity(0.7))
-                    .multilineTextAlignment(.trailing)
-                } label:  {
-                    Text("Message")
                 }
-                
-                MenuPicker(label: "Alert", selectedOption: $menuOption)
-                
-            }.frame(minHeight: 550)
-            Spacer()
+                .padding()
+            }
         }.preferredColorScheme(.dark)
         .onDisappear {
             if removeSchedule {
