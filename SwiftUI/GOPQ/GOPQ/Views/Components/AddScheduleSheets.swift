@@ -25,12 +25,12 @@ struct AddScheduleSheets: View {
     @State private var showAlert: Bool = false
     @State private var selectedTime: Date = Date()
     @State private var menuOption: MenuOption = .none
+    @State private var activePicker: PickerOptions = .none
 
     init (sheetControl showAddScheduleSheets: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = .empty
         self._showAddScheduleSheets = showAddScheduleSheets
         self.tempSchedule = .empty
-        
     
     }
     
@@ -59,9 +59,9 @@ struct AddScheduleSheets: View {
             .padding(20)
                         
             Form {
-                TimePicker(label: "Starts", hour: $startHour, minute: $startMinute)
+                TimePicker(label: "Starts", id: .start, activePicker: $activePicker, hour: $startHour, minute: $startMinute)
                     
-                TimePicker(label: "Ends", hour: $endHour, minute: $endMinute)
+                TimePicker(label: "Ends", id: .end, activePicker: $activePicker, hour: $endHour, minute: $endMinute)
                 
                 LabeledContent  {
                     TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
