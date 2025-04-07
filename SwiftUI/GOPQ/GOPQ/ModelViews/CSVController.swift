@@ -20,7 +20,7 @@ class CSVController{
             do {
                 return try readFile(url)
             } catch CSVParsingError.parsingError(let errorMsg) {
-                print(errorMsg)
+                print("CSVParsingError \(errorMsg)")
             } catch {
                 print("unknown error: \(error.localizedDescription)")
             }
@@ -46,8 +46,9 @@ class CSVController{
         var result = [ScheduleItemData]()
         let rows = content.components(separatedBy: "\n")
         
-        for row in rows {
-            let trimmedRow = row.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        for i in 1..<rows.count  { // ignore the first row, first row is for the title etc
+            let trimmedRow = rows[i] .trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedRow.isEmpty else { continue }
             
             let columns = trimmedRow.components(separatedBy: ";")
@@ -56,16 +57,14 @@ class CSVController{
                 continue
             }
             
-            let schedule = ScheduleItemData(
+            let schedule = ScheduleItemData( // jujur gw males error handling etc, ntr aja lah ya
                 employeeName: columns[0].trimmingCharacters(in: .whitespaces),
-                startTimeHour: Int(columns[1]) ?? 0,
-                startTimeMin: Int(columns[2]) ?? 0,
-                endTimeHour: Int(columns[3]) ?? 0,
-                endTimeMin: Int(columns[4]) ?? 0,
+                startTime: makeTime(hour: Int(columns[1]) ?? 0, min: Int(columns[2]) ?? 0),
+                endTime: makeTime(hour: Int(columns[3]) ?? 0, min: Int(columns[4]) ?? 0),
                 location: columns[5].trimmingCharacters(in: .whitespaces),
-                message: columns[6].trimmingCharacters(in: .whitespaces),
-                soundName: "System Default"
-            )
+                               message: columns[6].trimmingCharacters(in: .whitespaces),
+                               soundName: "System Default"
+                )
             result.append(schedule)
             print("Successfully parsed: \(schedule)")
         }

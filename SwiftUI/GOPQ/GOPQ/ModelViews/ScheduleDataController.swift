@@ -27,10 +27,7 @@ import SwiftUI
     }
 
     func compare(_ lhs:ScheduleItemData, _ rhs:ScheduleItemData) -> Bool {
-        if lhs.startTimeHour != rhs.startTimeHour{
-            return lhs.startTimeHour < rhs.startTimeHour
-        }
-        return lhs.startTimeMin < rhs.startTimeMin
+        return lhs.startTime < rhs.startTime
     }
     
     func insert(_ item:ScheduleItemData) { // fucking slow when adding many values, sorry guys

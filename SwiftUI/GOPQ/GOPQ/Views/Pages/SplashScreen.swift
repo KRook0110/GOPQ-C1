@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SplashScreen: View {
-    @Environment(UserDataController.self) var userdata
+    @Environment(UserData.self) var userdata
     @State private var usernameBuffer: String = ""
     var body: some View {
         ZStack{
