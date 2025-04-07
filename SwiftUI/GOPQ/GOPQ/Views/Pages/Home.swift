@@ -10,7 +10,10 @@ import SwiftUI
 
 struct home: View {
     
+    var schedule: ScheduleItemData
     @Environment(UserData.self) private var userdata
+    @State var showAddScheduleSheets: Bool = false
+    
     var body: some View {
         ZStack{
             
@@ -31,10 +34,23 @@ struct home: View {
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                    ScheduleList()
-                
+                ScheduleList()
                 Spacer()
-                
+                HStack{
+                    Spacer()
+                    Button {showAddScheduleSheets = true } label: {
+                        Image(systemName: "plus.circle")
+                            .resizable()
+                            .font(.system(size: 35))
+                            .foregroundColor(.blue)
+                            .frame(width: 50, height:50)
+                            .padding(25)
+                    }
+                    .sheet(isPresented: $showAddScheduleSheets) {
+                        AddScheduleSheets(sheetControl: $showAddScheduleSheets, schedule: .empty)
+                    }
+                }
+
             }
         }
     }
@@ -44,7 +60,7 @@ struct home_Previews: PreviewProvider {
     
     static var previews: some View {
         EnvironmentalTemp {
-            home()
+            home(schedule: .empty)
         }
     }
 }

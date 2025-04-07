@@ -21,7 +21,7 @@ struct GOPQApp: App {
                     SplashScreen()
                 }
                 else {
-                    home()
+                    home(schedule: .empty)
                 }
             }
         }

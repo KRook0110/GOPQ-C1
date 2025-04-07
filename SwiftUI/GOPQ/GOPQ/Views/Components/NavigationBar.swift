@@ -27,14 +27,14 @@ struct NavigationBar: View {
             HStack(spacing: 16) {
                 
                 ImportScheduleListButton()
-                    .frame(width: 35)
+                    .frame(width: 28)
 
                 Button { showMapSheet = true } label: {
                     Image(systemName: "map.fill")
                         .resizable()
                         .font(.system(size: 35))
                         .foregroundColor(.blue)
-                        .frame(width: 30, height: 35)
+                        .frame(width: 25, height: 30)
                 }
                 .sheet(isPresented: $showMapSheet) {
                     MapSheet()
