@@ -12,7 +12,6 @@ struct NavigationBar: View {
     
     @State var showMapSheet: Bool = false
     
-    
     var body: some View {
         HStack {
             Image("gopq")
@@ -31,10 +30,9 @@ struct NavigationBar: View {
 
                 Button { showMapSheet = true } label: {
                     Image(systemName: "map.fill")
-                        .resizable()
-                        .font(.system(size: 35))
+                        .font(.system(size: 25))
                         .foregroundColor(.blue)
-                        .frame(width: 25, height: 30)
+
                 }
                 .sheet(isPresented: $showMapSheet) {
                     MapSheet()

@@ -22,7 +22,7 @@ struct SplashScreen: View {
                     .foregroundStyle(.white).padding()
                 
                 
-                TextField("Username", text: $usernameBuffer)
+                TextField("Nama Lengkap", text: $usernameBuffer)
                     .padding(10)
                     .background(.gray)
                     .foregroundColor(.white)

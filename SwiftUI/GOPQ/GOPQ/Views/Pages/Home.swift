@@ -39,11 +39,9 @@ struct home: View {
                 HStack{
                     Spacer()
                     Button {showAddScheduleSheets = true } label: {
-                        Image(systemName: "plus.circle")
-                            .resizable()
+                        Image(systemName: "plus.circle.fill")
                             .font(.system(size: 35))
                             .foregroundColor(.blue)
-                            .frame(width: 50, height:50)
                             .padding(25)
                     }
                     .sheet(isPresented: $showAddScheduleSheets) {
