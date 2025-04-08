@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import EventKit
 
 @Observable
 class UserData {
@@ -18,5 +19,7 @@ class UserData {
     
     init() {
         username = UserDefaults.standard.string(forKey: "username") ?? ""
+        
     }
+    
 }

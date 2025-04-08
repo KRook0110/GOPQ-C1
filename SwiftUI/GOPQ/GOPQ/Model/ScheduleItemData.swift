@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import EventKit
 
 @Model
 class ScheduleItemData : Identifiable{
@@ -17,6 +18,8 @@ class ScheduleItemData : Identifiable{
     var location: String
     var message: String
     var soundName: String
+    var eventID: String = ""
+    var alertOffset: Int = 0
     
     init(employeeName: String, startTime: Date, endTime: Date, location: String, message: String, soundName: String) {
         self.id = UUID()
@@ -26,6 +29,7 @@ class ScheduleItemData : Identifiable{
         self.location = location
         self.message = message
         self.soundName = soundName
+        
     }
     
     func getStartTimeFormat() -> String {

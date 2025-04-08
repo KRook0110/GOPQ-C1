@@ -50,7 +50,6 @@ struct home: View {
                         AddScheduleSheets(sheetControl: $showAddScheduleSheets, schedule: .empty)
                     }
                 }
-
             }
         }
     }

@@ -13,6 +13,7 @@ struct ImportScheduleListButton: View {
     @State var showImportSheet: Bool = false
     @Environment(CSVController.self) var csvController
     @Environment(ScheduleController.self) var scheduleController
+    @Environment(UserData.self) var userdata
     
     var body: some View {
         Button {
@@ -30,7 +31,7 @@ struct ImportScheduleListButton: View {
                 UTType(filenameExtension: "csv")!
             ]
         ) { result in
-            scheduleController.set( csvController.handleFileImport(for: result))
+            scheduleController.set( csvController.handleFileImport(for: result), name: userdata.username)
         }
     }
 }

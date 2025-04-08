@@ -19,7 +19,7 @@ struct BorderLine: View {
                     startPoint: .leading,
                     endPoint: .trailing
             ) )
-            .frame(width: .infinity, height: 2)
+            .frame(height: 2)
     }
 }
 
