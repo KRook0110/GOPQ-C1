@@ -7,24 +7,44 @@
 
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ScheduleList: View {
+
+    @State var showImportSheet: Bool = false
+    @Environment(CSVController.self) var csvController
     @Environment(ScheduleController.self) var schedules
-    
+    @Environment(UserData.self) var userdata
     
     var body: some View {
         if schedules.data.isEmpty {
-            VStack {
-                Text("Silahkan Masukkan Jadwal Anda")
-                    .font(.title3)
-                    .foregroundColor(.white)
-                    .padding(.bottom, 16)
-                
-                
-                ImportScheduleListButton()
-                    .frame(width: 100)
+            Spacer()
+            Button {
+                showImportSheet = true
+            } label: {
+                VStack (spacing: 12){
+                    ImportScheduleListButton()
+                        .frame(width: 30)
+                    Text("Silahkan Masukkan Jadwal Anda")
+                        .font(.title3)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 16)
+                        .frame(width: 200)
+                        .multilineTextAlignment(.center)
+                }.padding(.init(top: 16, leading: 16, bottom: 12, trailing: 16))
+                .background(.darkGray)
+                .cornerRadius(20)
             }
-            .padding(.top, 100)
+            .fileImporter(
+                isPresented: $showImportSheet,
+                allowedContentTypes: [
+                    UTType.commaSeparatedText,
+                    UTType(filenameExtension: "csv")!
+                ]
+            ) { result in
+                schedules.set( csvController.handleFileImport(for: result), name: userdata.username)
+            }
+            Spacer()
         }
         else {
             ScrollView {
@@ -50,15 +70,15 @@ struct ScheduleList: View {
 
 
 
-#Preview {
-    ZStack {
-        Rectangle()
-            .fill(.black)
-            .ignoresSafeArea()
-        //        ScheduleList()
-        //            .environment(ObservableScheduleList(schedules))
-        EnvironmentalTemp() {
-            ScheduleList()
-        }
-    }
-}
+//#Preview {
+//    ZStack {
+//        Rectangle()
+//            .fill(.black)
+//            .ignoresSafeArea()
+//        //        ScheduleList()
+//        //            .environment(ObservableScheduleList(schedules))
+//        EnvironmentalTemp() {
+//            ScheduleList()
+//        }
+//    }
+//}

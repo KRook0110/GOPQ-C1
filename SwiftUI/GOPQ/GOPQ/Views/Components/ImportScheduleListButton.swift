@@ -21,6 +21,7 @@ struct ImportScheduleListButton: View {
         } label: {
             Image(systemName: "square.and.arrow.down")
                 .resizable()
+                .font(.system(size: 35))
                 .foregroundColor(.blue)
                 .aspectRatio(contentMode: .fit)
         }

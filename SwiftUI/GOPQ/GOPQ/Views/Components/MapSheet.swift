@@ -15,7 +15,7 @@ struct MapSheet: View {
     @State private var lastAmount:CGFloat = 0
 
 
-    let images = ["GOP Map", "GOP Map"]
+    let images = ["GOP Map"]
 
     var body: some View {
         ZStack {

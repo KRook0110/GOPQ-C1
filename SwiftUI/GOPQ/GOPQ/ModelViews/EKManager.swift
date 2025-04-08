@@ -34,7 +34,7 @@ class EKManager {
             showAlert = true
         }
         catch {
-            print("error: \(error)" )
+            print("Error: \(error)" )
         }
         // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
         
