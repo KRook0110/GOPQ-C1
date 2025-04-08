@@ -18,9 +18,9 @@ enum MenuOption: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
     
     // Convert to minutes for easier calculation
-    var minutes: Int {
+    var minutes: Int?  {
         switch self {
-        case .none: return 0
+        case .none: return nil
         case .fiveMin: return 5
         case .fifteenMin: return 15
         case .thirtyMin: return 30

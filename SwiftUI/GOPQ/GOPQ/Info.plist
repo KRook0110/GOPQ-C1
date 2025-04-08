@@ -4,5 +4,7 @@
 <dict>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>to sync our shifts to your calendar</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string></string>
 </dict>
 </plist>
