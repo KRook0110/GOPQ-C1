@@ -78,10 +78,12 @@ struct ScheduleDetailBottomSheet: View {
                                 topTrailingRadius: 15
                             )
                         )
+                    Divider().background(.darkGray)
 
                     TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
                         .padding()
                         .background(.darkGray)
+                    Divider().background(.darkGray)
 
                     LabeledContent {
                         TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
@@ -97,6 +99,7 @@ struct ScheduleDetailBottomSheet: View {
                     }
                     .padding()
                     .background(.darkGray)
+                    Divider().background(.darkGray)
 
                     LabeledContent {
                         TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
@@ -113,7 +116,8 @@ struct ScheduleDetailBottomSheet: View {
                     }
                     .padding()
                     .background(.darkGray)
-
+                    Divider().background(.darkGray)
+                    
                     MenuPicker(label: "Alert", selectedOption: $menuOption)
                         .padding()
                         .background(.darkGray)
@@ -126,8 +130,6 @@ struct ScheduleDetailBottomSheet: View {
                         .onChange(of: menuOption) {
                             tempSchedule.alertOffset = menuOption.minutes
                         }
-
-                    Divider().background(Color.white.opacity(0.3))
 
                     Button(role: .destructive) {
                         isPresented = false
@@ -176,7 +178,7 @@ struct ScheduleDetailBottomSheet: View {
         .alert("Error", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Shift awal kamu lebih besar dari shift akhirnya")
+            Text("Waktu mulai harus lebih awal dari waktu selesai.")
         }
     }
 }

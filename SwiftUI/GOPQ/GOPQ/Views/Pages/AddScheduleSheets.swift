@@ -77,8 +77,14 @@ struct AddScheduleSheets: View {
                                 topTrailingRadius: 15
                             )
                         )
+                    Divider().background(.darkGray)
+
+                    
                     TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
                         .background(.darkGray)
+                    Divider().background(.darkGray)
+
+                    
                     LabeledContent {
                         TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
                             Text("Location")
@@ -94,6 +100,9 @@ struct AddScheduleSheets: View {
                             isFocusedLocation = true
                         }
                         .background(.darkGray)
+                    Divider().background(.darkGray)
+
+                    
                     LabeledContent {
                         TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
                             Text("Message")
@@ -108,6 +117,9 @@ struct AddScheduleSheets: View {
                         }
                     .padding()
                     .background(.darkGray)
+                    Divider().background(.darkGray)
+
+                    
                     MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
                         .background(.darkGray)
                         .clipShape(
@@ -116,19 +128,6 @@ struct AddScheduleSheets: View {
                                 bottomTrailingRadius: 15
                             )
                         )
-                    Divider().background(Color.white.opacity(0.3))
-                    
-                    Button(role: .destructive) {
-                        showAddScheduleSheets = false
-                        removeSchedule = true
-                    } label: {
-                        Text("Delete Schedule")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .foregroundColor(.red)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(12)
-                    }
                 }
                 .padding()
             }.simultaneousGesture(
@@ -161,9 +160,9 @@ struct AddScheduleSheets: View {
                 endHour = endTimeComponents.hour ?? 0
                 endMinute = endTimeComponents.minute ?? 0
             }
-            .alert("error", isPresented: $showAlert) {
+            .alert("Error", isPresented: $showAlert) {
             } message: {
-                Text("Shift awal kamu lebih besar dari shift akhirnya")
+                Text("Waktu mulai harus lebih awal dari waktu selesai.")
             }
         
     }

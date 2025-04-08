@@ -25,27 +25,24 @@ struct ScheduleItem: View {
             VStack(alignment: .leading) {
                 Text("\(schedule.getStartTimeFormat()) - \(schedule.getEndTimeFormat())")
                     .bold( )
-                    .font(.largeTitle)
+                    .font(.title)
                     .padding(.bottom, spaceBetweenTimeAndLocation)
                     .foregroundStyle(.white)
                 Text(schedule.location)
                     .foregroundStyle(.gray)
             }
-            .padding(.leading, xPadding)
             Spacer()
             Button {
                 showBottomSheet = true
             } label: {
                 Text("Edit")
-                    .underline()
                     .padding(.trailing, xPadding)
             }
-            .sheet(isPresented: $showBottomSheet) {
-                ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
-                    .presentationCornerRadius(10)
-                    .background(Color("ModularBackground"))
-                
-            }
+        }.sheet(isPresented: $showBottomSheet) {
+            ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
+                .presentationCornerRadius(10)
+                .background(Color("ModularBackground"))
+            
         }
     }
 }
