@@ -9,6 +9,11 @@ import SwiftUI
 
 struct AddScheduleSheets: View {
     
+    enum Fields {
+        case location
+        case message
+    }
+    
     var schedule: ScheduleItemData
     @Binding var showAddScheduleSheets: Bool
     
@@ -29,7 +34,8 @@ struct AddScheduleSheets: View {
     
     @FocusState private var isFocusedLocation: Bool
     @FocusState private var isFocusedMessage: Bool
-    
+    @FocusState private var focusInput: Fields?
+
     init (sheetControl showAddScheduleSheets: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = .empty
         self._showAddScheduleSheets = showAddScheduleSheets
@@ -125,7 +131,11 @@ struct AddScheduleSheets: View {
                     }
                 }
                 .padding()
-            }
+            }.simultaneousGesture(
+                TapGesture().onEnded {
+                    focusInput = nil
+                }
+            )
         }.preferredColorScheme(.dark)
             .onDisappear {
                 if removeSchedule {

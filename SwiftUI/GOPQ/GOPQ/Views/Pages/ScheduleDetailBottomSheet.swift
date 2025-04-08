@@ -23,6 +23,8 @@ struct ScheduleDetailBottomSheet: View {
     }
 
     @FocusState private var focusInput: Fields?
+    @FocusState private var isFocusedLocation: Bool
+    @FocusState private var isFocusedMessage: Bool
 
     @State private var tempSchedule: ScheduleItemData
     @Environment(ScheduleController.self) private var schedules
@@ -36,6 +38,7 @@ struct ScheduleDetailBottomSheet: View {
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
     @State private var menuOption: MenuOption = .none
+    
 
     init(sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
@@ -84,11 +87,13 @@ struct ScheduleDetailBottomSheet: View {
                         TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
                             Text("Location")
                         }
-                        .focused($focusInput, equals: .location)
+                        .focused($isFocusedLocation)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
                         Text("Location")
+                    }.onTapGesture {
+                        isFocusedLocation = true
                     }
                     .padding()
                     .background(.darkGray)
@@ -97,11 +102,14 @@ struct ScheduleDetailBottomSheet: View {
                         TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
                             Text("Message")
                         }
-                        .focused($focusInput, equals: .message)
+                        .focused($isFocusedMessage)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
                         Text("Message")
+                    }
+                    .onTapGesture {
+                        isFocusedMessage = true
                     }
                     .padding()
                     .background(.darkGray)
