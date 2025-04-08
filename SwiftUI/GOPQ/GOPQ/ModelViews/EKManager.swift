@@ -78,7 +78,9 @@ class EKManager {
         while let alarm = targetevent.alarms?.last {
             targetevent.removeAlarm(alarm)
         }
-        targetevent.addAlarm(EKAlarm(relativeOffset: Double(schedule.alertOffset * 60)))
+        if let offset = schedule.alertOffset{
+            targetevent.addAlarm(EKAlarm(relativeOffset: Double(offset * 60)))
+        }
 //        print("before : ", targetevent.eventIdentifier ?? "nil")
         do {
             try store.save(targetevent, span: .thisEvent, commit: true)
