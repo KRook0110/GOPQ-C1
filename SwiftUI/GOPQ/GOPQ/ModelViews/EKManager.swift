@@ -13,6 +13,7 @@ enum CalendarError: Error {
     case CError(String)
 }
 
+@MainActor
 @Observable
 class EKManager {
     
@@ -20,48 +21,17 @@ class EKManager {
     var alertMessage: String = ""
     var permissionGranted = false
     let store = EKEventStore()
-    var calendar: EKCalendar! // this will crash T-T tapi udah keburu buru sorry ges
+    var calendar: EKCalendar? = nil // this will crash T-T tapi udah keburu buru sorry ges
     
     let calendarIDKey = "calendar_id"
     
-    init() {
-        
-        do {
-            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
-            print("connected calendar = \(calendar.title)")
-        } catch CalendarError.CError(let errorMsg) {
-            alertMessage = "\(errorMsg)"
-            showAlert = true
-        }
-        catch {
-            print("error: \(error)" )
-        }
-        // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
-        
-        store.requestFullAccessToEvents { granted, err in
-            DispatchQueue.main.async {
-                self.permissionGranted = granted
-                if !granted {
-                    self.alertMessage = "Tolong kasih permissions untuk access calendar anda"
-                    self.showAlert = true
-                    return
-                }
-            }
-        }
-        
-        
-        do {
-            try store.saveCalendar(calendar, commit: true)
-        }
-        catch {
-            alertMessage = "Failed to save calendar"
-            showAlert = true
-        }
-
-    }
     
     // returns event identifier
     func syncEvent(_ schedule: ScheduleItemData) {
+        requestAccess()
+        if !permissionGranted {
+            return
+        }
         
         var targetevent: EKEvent
         if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
@@ -96,8 +66,55 @@ class EKManager {
         schedule.eventID = targetevent.eventIdentifier ?? ""
     }
     
+    func requestAccess() {
+        if permissionGranted {
+            return
+        }
+        
+        store.requestFullAccessToEvents { granted, err in
+            self.permissionGranted = granted
+            if !granted {
+                self.alertUser("Tolong kasih permissions untuk access calendar anda")
+                return
+            }
+            else {
+                self.setCalendar()
+            }
+        }
+        
+    }
     
-    func createGOPQCalendar() -> EKCalendar {
+    func setCalendar() {
+        do {
+            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
+            print("connected calendar = \(calendar?.title ?? "nil" )")
+        } catch CalendarError.CError(let errorMsg) {
+            alertUser("\(errorMsg)")
+            return
+        }
+        catch {
+            print("error: \(error)" )
+            return
+        }
+        
+        if let unwrappedCalendar = calendar {
+            do {
+                try store.saveCalendar(unwrappedCalendar, commit: true) // crash if calendar is not present
+            }
+            catch {
+                alertUser("Failed to save calendar")
+                return
+            }
+        }
+    }
+    
+    func alertUser(_ msg: String) {
+        alertMessage = msg
+        showAlert = true
+    }
+    
+    
+    private func createGOPQCalendar() -> EKCalendar {
         let newCalendar = EKCalendar(for: .event, eventStore: store)
         let source = findBestSource()
         newCalendar.title = "GOPQ Calendar"
@@ -106,8 +123,8 @@ class EKManager {
         
         return newCalendar
     }
-    func getCalendar() throws -> EKCalendar {
-        
+    private func getCalendar() throws -> EKCalendar {
+
         if let unwrappedCalendar = store.defaultCalendarForNewEvents {
             return unwrappedCalendar
         }
@@ -129,7 +146,7 @@ class EKManager {
         return  newCalendar
     }
     
-    func findBestSource()-> EKSource {
+    private func findBestSource()-> EKSource? {
         if let iCloudSource  = store.sources.first(where: {$0.sourceType == .calDAV}) {
             return iCloudSource
         }
@@ -148,6 +165,11 @@ class EKManager {
     }
     
     func removeEvent(_ schedule: ScheduleItemData) {
+        requestAccess()
+        if !permissionGranted {
+            return
+        }
+        
         if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
             do {
                 try store.remove(event, span: .thisEvent)
