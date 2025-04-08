@@ -39,11 +39,13 @@ class EKManager {
         // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
         
         store.requestFullAccessToEvents { granted, err in
-            self.permissionGranted = granted
-            if !granted {
-                self.alertMessage = "Tolong kasih permissions untuk access calendar anda"
-                self.showAlert = true
-                return
+            DispatchQueue.main.async {
+                self.permissionGranted = granted
+                if !granted {
+                    self.alertMessage = "Tolong kasih permissions untuk access calendar anda"
+                    self.showAlert = true
+                    return
+                }
             }
         }
         
@@ -79,7 +81,7 @@ class EKManager {
             targetevent.removeAlarm(alarm)
         }
         if let offset = schedule.alertOffset{
-            targetevent.addAlarm(EKAlarm(relativeOffset: Double(offset * 60)))
+            targetevent.addAlarm(EKAlarm(relativeOffset: Double( -offset * 60)))
         }
 //        print("before : ", targetevent.eventIdentifier ?? "nil")
         do {
