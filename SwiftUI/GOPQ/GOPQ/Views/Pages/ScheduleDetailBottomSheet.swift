@@ -16,14 +16,12 @@ enum PickerOptions {
 struct ScheduleDetailBottomSheet: View {
     var schedule: ScheduleItemData
     @Binding var isPresented: Bool
+
     enum Fields {
-       case start
-       case end
-       case location
-       case messsage
-       case alert
-   }
-    
+        case location
+        case message
+    }
+
     @FocusState private var focusInput: Fields?
 
     @State private var tempSchedule: ScheduleItemData
@@ -65,10 +63,11 @@ struct ScheduleDetailBottomSheet: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
-            
+
             ScrollView {
                 VStack(spacing: 0) {
-                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
+                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute)
+                        .padding()
                         .background(.darkGray)
                         .clipShape(
                             .rect(
@@ -76,29 +75,39 @@ struct ScheduleDetailBottomSheet: View {
                                 topTrailingRadius: 15
                             )
                         )
-                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
+
+                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
+                        .padding()
                         .background(.darkGray)
+
                     LabeledContent {
                         TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
                             Text("Location")
                         }
+                        .focused($focusInput, equals: .location)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
                         Text("Location")
-                    }.padding()
+                    }
+                    .padding()
                     .background(.darkGray)
+
                     LabeledContent {
                         TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
                             Text("Message")
                         }
+                        .focused($focusInput, equals: .message)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
                         Text("Message")
-                    }.padding()
+                    }
+                    .padding()
                     .background(.darkGray)
-                    MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
+
+                    MenuPicker(label: "Alert", selectedOption: $menuOption)
+                        .padding()
                         .background(.darkGray)
                         .clipShape(
                             .rect(
@@ -109,6 +118,7 @@ struct ScheduleDetailBottomSheet: View {
                         .onChange(of: menuOption) {
                             tempSchedule.alertOffset = menuOption.minutes
                         }
+
                     Divider().background(Color.white.opacity(0.3))
 
                     Button(role: .destructive) {
@@ -122,9 +132,15 @@ struct ScheduleDetailBottomSheet: View {
                             .background(Color.white.opacity(0.05))
                             .cornerRadius(12)
                     }
+                    .padding(.top, 20)
                 }
                 .padding()
             }
+            .simultaneousGesture(
+                TapGesture().onEnded {
+                    focusInput = nil
+                }
+            )
 
             Spacer()
         }
@@ -156,6 +172,8 @@ struct ScheduleDetailBottomSheet: View {
         }
     }
 }
+
+
 
 
      
