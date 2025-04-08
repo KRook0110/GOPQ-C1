@@ -22,11 +22,11 @@ struct GOPQApp: App {
                 }
                 else {
                     home(schedule: .empty)
-//                        .alert("Error", isPresented: $observableScheduleController.ekmanager.showAlert) {
-//                            Button("OK", role: .cancel) {}
-//                        } message: {
-//                            Text("Kami tidak bisa access kalender anda, kami tidak akan dapat membuat event di kalender anda.")
-//                        }
+                        .alert("Error", isPresented: $observableScheduleController.ekmanager.showAlert) { // jujur bgt keknya alert bisa dimasukin ke controller sendiri
+                            Button("OK", role: .cancel) {}
+                        } message: {
+                            Text(observableScheduleController.ekmanager.alertMessage)
+                        }
                 }
             }
         }
