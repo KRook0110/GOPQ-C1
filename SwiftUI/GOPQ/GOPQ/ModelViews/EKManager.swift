@@ -28,6 +28,7 @@ class EKManager {
         
         do {
             calendar = try getCalendar() // saya bingung sendiri sama sourcenya
+            print("connected calendar = \(calendar.title)")
         } catch CalendarError.CError(let errorMsg) {
             alertMessage = "\(errorMsg)"
             showAlert = true
@@ -36,6 +37,7 @@ class EKManager {
             print("error: \(error)" )
         }
         // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
+        
         store.requestFullAccessToEvents { granted, err in
             self.permissionGranted = granted
             if !granted {
@@ -46,6 +48,14 @@ class EKManager {
         }
         
         
+        do {
+            try store.saveCalendar(calendar, commit: true)
+        }
+        catch {
+            alertMessage = "Failed to save calendar"
+            showAlert = true
+        }
+
     }
     
     // returns event identifier
@@ -64,7 +74,7 @@ class EKManager {
         targetevent.notes = "This is a gopq auto generated event"
         targetevent.startDate = schedule.startTime
         targetevent.endDate = schedule.endTime
-        targetevent.calendar = store.defaultCalendarForNewEvents
+        targetevent.calendar = calendar
         while let alarm = targetevent.alarms?.last {
             targetevent.removeAlarm(alarm)
         }
@@ -93,6 +103,7 @@ class EKManager {
         return newCalendar
     }
     func getCalendar() throws -> EKCalendar {
+        
         if let unwrappedCalendar = store.defaultCalendarForNewEvents {
             return unwrappedCalendar
         }
@@ -104,6 +115,7 @@ class EKManager {
             UserDefaults.standard.removeObject(forKey : calendarIDKey)
         }
         
+
         let newCalendar = createGOPQCalendar()
         do {
             try store.saveCalendar(newCalendar, commit : true)
@@ -120,8 +132,11 @@ class EKManager {
         if let local = store.sources.first(where: {$0.sourceType == .local}) {
             return local
         }
+        if let defaultSource = store.defaultCalendarForNewEvents?.source {
+            return defaultSource
+        }
         if let firstSource = store.sources.first {
-            
+            return firstSource
         }
         alertMessage = "Calendar tidak ada source"
         showAlert = true
