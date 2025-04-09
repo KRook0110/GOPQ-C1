@@ -28,7 +28,9 @@ class EKManager {
     
     // returns event identifier
     func syncEvent(_ schedule: ScheduleItemData) {
+        print("Sebelum Access \(permissionGranted)")
         requestAccess()
+        print("Setelah Access \(permissionGranted)")
         if !permissionGranted {
             return
         }
