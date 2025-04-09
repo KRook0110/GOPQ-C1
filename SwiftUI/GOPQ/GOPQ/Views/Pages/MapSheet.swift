@@ -9,13 +9,10 @@ import SwiftUI
 
 struct MapSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedImage: String? = nil
 
     @State private var currentAmount:CGFloat = 0
     @State private var lastAmount:CGFloat = 0
 
-
-    let images = ["GOP Map"]
 
     var body: some View {
         ZStack {
@@ -36,46 +33,12 @@ struct MapSheet: View {
                     .padding()
                 }
 
-//                VStack(spacing: 20) {
-//                    ForEach(images, id: \.self) { imageName in
-//                        Image(imageName)
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fit)
-//                            .frame(maxWidth: .infinity)
-//                            .onTapGesture {
-//                                selectedImage = imageName
-//                            }
-//                    }
-//                }
-//                .padding()
                 ZoomableImage(imageName: "GOP map")
 
                 Spacer()
             }
 
-            if let selectedImage = selectedImage {
-                Color.black.opacity(0.9)
-                    .ignoresSafeArea()
-                    .overlay(
-                        VStack {
-                            HStack {
-                                Spacer()
-                                Button(action: {
-                                    self.selectedImage = nil
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .foregroundColor(.gray)
-                                        .padding(8)
-                                        .background(Color.gray.opacity(0.1))
-                                        .clipShape(Circle())
-                                }.padding()
-                            }
-                            ZoomableImage(imageName: selectedImage)
-                        }
-                    )
-                    .transition(.opacity)
-                    .animation(.easeInOut, value: selectedImage)
-            }
+            
         }
     }
 }

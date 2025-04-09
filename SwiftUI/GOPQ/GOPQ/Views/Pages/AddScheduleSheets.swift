@@ -139,11 +139,17 @@ struct AddScheduleSheets: View {
                             }.focused($isFocusedMessage)
                                 .foregroundStyle(.white.opacity(0.7))
                                 .multilineTextAlignment(.trailing)
+                                .onChange(of: isFocusedMessage) { oldValue, newValue in
+                                    if newValue {
+                                        pickerOption = .none
+                                    }
+                                }
                         } label: {
                             Text("Pesan")
                         }.contentShape(Rectangle())
                             .onTapGesture{
                                 isFocusedMessage = true
+                                pickerOption = .none
                             }
                             .padding()
                             .background(.darkGray)
