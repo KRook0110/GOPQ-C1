@@ -36,18 +36,19 @@ struct MapSheet: View {
                     .padding()
                 }
 
-                VStack(spacing: 20) {
-                    ForEach(images, id: \.self) { imageName in
-                        Image(imageName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity)
-                            .onTapGesture {
-                                selectedImage = imageName
-                            }
-                    }
-                }
-                .padding()
+//                VStack(spacing: 20) {
+//                    ForEach(images, id: \.self) { imageName in
+//                        Image(imageName)
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(maxWidth: .infinity)
+//                            .onTapGesture {
+//                                selectedImage = imageName
+//                            }
+//                    }
+//                }
+//                .padding()
+                ZoomableImage(imageName: "GOP Map")
 
                 Spacer()
             }
@@ -80,6 +81,6 @@ struct MapSheet: View {
 }
 
 
-#Preview {
-    MapSheet()
-}
+//#Preview {
+//    MapSheet()
+//}
