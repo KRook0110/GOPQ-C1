@@ -21,24 +21,29 @@ struct ScheduleItem: View {
     @State private var showBottomSheet: Bool = false
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("\(schedule.getStartTimeFormat()) - \(schedule.getEndTimeFormat())")
-                    .bold( )
-                    .font(.title)
-                    .padding(.bottom, spaceBetweenTimeAndLocation)
-                    .foregroundStyle(.white)
-                Text(schedule.location)
-                    .foregroundStyle(.gray)
+        Button{
+            showBottomSheet = true
+        } label: {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("\(schedule.getStartTimeFormat()) - \(schedule.getEndTimeFormat())")
+                        .bold( )
+                        .font(.title)
+                        .padding(.bottom, spaceBetweenTimeAndLocation)
+                        .foregroundStyle(.white)
+                    Text(schedule.location)
+                        .foregroundStyle(.gray)
+                }
+                Spacer()
+                Button {
+                    showBottomSheet = true
+                } label: {
+                    Text("Ubah")
+                        .padding(.trailing, xPadding)
+                }
             }
-            Spacer()
-            Button {
-                showBottomSheet = true
-            } label: {
-                Text("Ubah")
-                    .padding(.trailing, xPadding)
-            }
-        }.sheet(isPresented: $showBottomSheet) {
+        }
+        .sheet(isPresented: $showBottomSheet) {
             ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
                 .presentationCornerRadius(10)
                 .background(Color("ModularBackground"))

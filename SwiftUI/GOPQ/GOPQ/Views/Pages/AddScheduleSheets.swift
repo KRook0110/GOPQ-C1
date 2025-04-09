@@ -28,6 +28,7 @@ struct AddScheduleSheets: View {
     @State private var endHour: Int = 0
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
+    @State private var errorMessage: String = ""
     @State private var selectedTime: Date = Date()
     @State private var menuOption: MenuOption = .none
     @State private var activePicker: PickerOptions = .none
@@ -35,12 +36,12 @@ struct AddScheduleSheets: View {
     @FocusState private var isFocusedLocation: Bool
     @FocusState private var isFocusedMessage: Bool
     @FocusState private var focusInput: Fields?
-
+    
     init (sheetControl showAddScheduleSheets: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = .empty
         self._showAddScheduleSheets = showAddScheduleSheets
         self.tempSchedule = .empty
-    
+        
     }
     
     var body: some View {
@@ -50,27 +51,32 @@ struct AddScheduleSheets: View {
                 Button {
                     showAddScheduleSheets = false
                 } label: {
-                    Text("Cancel")
+                    Text("Batal")
                 }
                 Spacer()
                 Button {
-                    if startHour < endHour || startHour == endHour && startMinute < endMinute {
+                    if startHour > endHour || startHour == endHour && startMinute >= endMinute {
+                        errorMessage = "Waktu mulai harus lebih awal dari waktu selesai."
+                        showAlert = true
+                    } else if tempSchedule.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        errorMessage = "Lokasi harus diisi."
+                        showAlert = true
+                    }
+                    else {
                         showAddScheduleSheets = false
                         saveSchedule = true
                     }
-                    else {
-                        showAlert = true
-                    }
                 } label: {
-                    Text("Save")
+                    Text("Simpan")
                 }
             }
             .padding(20)
-
+            
             ScrollView {
                 VStack(spacing: 0) {
-                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
+                    TimePicker(label: "Mulai", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
                         .background(.darkGray)
+                        .contentShape(Rectangle())
                         .clipShape(
                             .rect(
                                 topLeadingRadius: 15,
@@ -78,22 +84,22 @@ struct AddScheduleSheets: View {
                             )
                         )
                     Divider().background(.darkGray)
-
                     
-                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
-                        .background(.darkGray)
+                    
+                    TimePicker(label: "Berakhir", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
+                        .background(.darkGray).contentShape(Rectangle())
                     Divider().background(.darkGray)
-
+                    
                     
                     LabeledContent {
-                        TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
-                            Text("Location")
+                        TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
+                            Text("Lokasi")
                         }
                         .focused($isFocusedLocation)
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
-                        Text("Location")
+                        Text("Lokasi")
                     }.padding()
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -101,26 +107,26 @@ struct AddScheduleSheets: View {
                         }
                         .background(.darkGray)
                     Divider().background(.darkGray)
-
+                    
                     
                     LabeledContent {
-                        TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
-                            Text("Message")
+                        TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
+                            Text("Pesan")
                         }.focused($isFocusedMessage)
                             .foregroundStyle(.white.opacity(0.7))
                             .multilineTextAlignment(.trailing)
                     } label: {
-                        Text("Message")
+                        Text("Pesan")
                     }.contentShape(Rectangle())
                         .onTapGesture{
                             isFocusedMessage = true
                         }
-                    .padding()
-                    .background(.darkGray)
+                        .padding()
+                        .background(.darkGray)
                     Divider().background(.darkGray)
-
                     
-                    MenuPicker(label: "Alert", selectedOption: $menuOption).padding()
+                    
+                    MenuPicker(label: "Pengingat", selectedOption: $menuOption).padding()
                         .background(.darkGray)
                         .clipShape(
                             .rect(
@@ -145,7 +151,6 @@ struct AddScheduleSheets: View {
                 if saveSchedule {
                     tempSchedule.startTime = makeTime(hour: startHour, min: startMinute)
                     tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
-                    
                     withAnimation(.easeInOut)  {
                         schedules.insert(tempSchedule)
                     }
@@ -160,9 +165,9 @@ struct AddScheduleSheets: View {
                 endHour = endTimeComponents.hour ?? 0
                 endMinute = endTimeComponents.minute ?? 0
             }
-            .alert("Error", isPresented: $showAlert) {
+            .alert("Peringatan", isPresented: $showAlert) {
             } message: {
-                Text("Waktu mulai harus lebih awal dari waktu selesai.")
+                Text(errorMessage)
             }
         
     }

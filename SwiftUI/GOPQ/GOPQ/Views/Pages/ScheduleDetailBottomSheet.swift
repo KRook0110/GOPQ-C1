@@ -38,6 +38,7 @@ struct ScheduleDetailBottomSheet: View {
     @State private var endMinute: Int = 0
     @State private var showAlert: Bool = false
     @State private var menuOption: MenuOption = .none
+    @State private var errorMessage: String = ""
     
 
     init(sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
@@ -50,18 +51,23 @@ struct ScheduleDetailBottomSheet: View {
         VStack {
             HStack {
                 Button { isPresented = false } label: {
-                    Text("Cancel")
+                    Text("Batal")
                 }
                 Spacer()
                 Button {
-                    if startHour < endHour || (startHour == endHour && startMinute < endMinute) {
-                        isPresented = false
-                        saveSchedule = true
-                    } else {
+                    if startHour > endHour || startHour == endHour && startMinute >= endMinute {
+                        errorMessage = "Waktu mulai harus lebih awal dari waktu selesai."
+                        showAlert = true
+                    } else if tempSchedule.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        errorMessage = "Lokasi harus diisi."
                         showAlert = true
                     }
+                    else {
+                        isPresented = false
+                        saveSchedule = true
+                    }
                 } label: {
-                    Text("Save")
+                    Text("Simpan")
                 }
             }
             .padding(.horizontal, 20)
@@ -86,7 +92,7 @@ struct ScheduleDetailBottomSheet: View {
                     Divider().background(.darkGray)
 
                     LabeledContent {
-                        TextField(text: $tempSchedule.location, prompt: Text("Empty")) {
+                        TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
                             Text("Location")
                         }
                         .focused($isFocusedLocation)
@@ -102,7 +108,7 @@ struct ScheduleDetailBottomSheet: View {
                     Divider().background(.darkGray)
 
                     LabeledContent {
-                        TextField(text: $tempSchedule.message, prompt: Text("Empty")) {
+                        TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
                             Text("Message")
                         }
                         .focused($isFocusedMessage)
@@ -175,17 +181,13 @@ struct ScheduleDetailBottomSheet: View {
             endHour = end.hour ?? 0
             endMinute = end.minute ?? 0
         }
-        .alert("Error", isPresented: $showAlert) {
+        .alert("Peringatan", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Waktu mulai harus lebih awal dari waktu selesai.")
+            Text(errorMessage)
         }
     }
 }
-
-
-
-
      
 #Preview {
     ZStack {

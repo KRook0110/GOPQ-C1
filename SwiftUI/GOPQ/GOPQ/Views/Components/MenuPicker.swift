@@ -10,10 +10,10 @@ import SwiftUI
 
 enum MenuOption: String, CaseIterable, Identifiable {
     case none = "None"
-    case fiveMin = "5 minutes before"
-    case fifteenMin = "15 minutes before"
-    case thirtyMin = "30 minutes before"
-    case oneHour = "1 hour before"
+    case fiveMin = "5 menit sebelum"
+    case fifteenMin = "15 menit sebelum"
+    case thirtyMin = "30 menit sebelum"
+    case oneHour = "1 jam sebelum"
     
     var id: String { self.rawValue }
     

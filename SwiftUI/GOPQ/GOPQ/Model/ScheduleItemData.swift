@@ -70,7 +70,7 @@ extension ScheduleItemData {
             startTime: .notSet,
             endTime: .notSet,
             location: "",
-            message: "",
+            message: "GOPQ Alert",
             soundName: ""
         )
     }
