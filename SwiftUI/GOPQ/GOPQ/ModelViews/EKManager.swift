@@ -20,10 +20,45 @@ class EKManager {
     var alertMessage: String = ""
     var permissionGranted = false
     let store = EKEventStore()
-    var calendar: EKCalendar? = nil // this will crash T-T tapi udah keburu buru sorry ges
+    var calendar: EKCalendar! // this will crash T-T tapi udah keburu buru sorry ges
     
     let calendarIDKey = "calendar_id"
     
+    init() {
+        
+        do {
+            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
+            print("connected calendar = \(calendar.title)")
+        } catch CalendarError.CError(let errorMsg) {
+            alertMessage = "\(errorMsg)"
+            showAlert = true
+        }
+        catch {
+            print("Error: \(error)" )
+        }
+        // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
+        
+        store.requestFullAccessToEvents { granted, err in
+            DispatchQueue.main.async {
+                self.permissionGranted = granted
+                if !granted {
+                    self.alertMessage = "Tolong kasih permissions untuk access calendar anda"
+                    self.showAlert = true
+                    return
+                }
+            }
+        }
+        
+        
+        do {
+            try store.saveCalendar(calendar, commit: true)
+        }
+        catch {
+            alertMessage = "Failed to save calendar"
+            showAlert = true
+        }
+
+    }
     
     // returns event identifier
     func syncEvent(_ schedule: ScheduleItemData) {
@@ -85,37 +120,7 @@ class EKManager {
         }
     }
     
-    func setCalendar() {
-        do {
-            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
-            print("connected calendar = \(calendar?.title ?? "nil" )")
-        } catch CalendarError.CError(let errorMsg) {
-            alertUser("\(errorMsg)")
-            return
-        }
-        catch {
-            print("error: \(error)" )
-            return
-        }
-        
-        if let unwrappedCalendar = calendar {
-            do {
-                try store.saveCalendar(unwrappedCalendar, commit: true) // crash if calendar is not present
-            }
-            catch {
-                alertUser("Failed to save calendar")
-                return
-            }
-        }
-    }
-    
-    func alertUser(_ msg: String) {
-        alertMessage = msg
-        showAlert = true
-    }
-    
-    
-    private func createGOPQCalendar() -> EKCalendar {
+    func createGOPQCalendar() -> EKCalendar {
         let newCalendar = EKCalendar(for: .event, eventStore: store)
         let source = findBestSource()
         newCalendar.title = "GOPQ Calendar"
@@ -124,8 +129,8 @@ class EKManager {
         
         return newCalendar
     }
-    private func getCalendar() throws -> EKCalendar {
-
+    func getCalendar() throws -> EKCalendar {
+        
         if let unwrappedCalendar = store.defaultCalendarForNewEvents {
             return unwrappedCalendar
         }
@@ -147,7 +152,7 @@ class EKManager {
         return  newCalendar
     }
     
-    private func findBestSource()-> EKSource? {
+    func findBestSource()-> EKSource {
         if let iCloudSource  = store.sources.first(where: {$0.sourceType == .calDAV}) {
             return iCloudSource
         }
