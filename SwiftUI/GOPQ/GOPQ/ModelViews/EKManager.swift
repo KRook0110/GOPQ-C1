@@ -20,45 +20,11 @@ class EKManager {
     var alertMessage: String = ""
     var permissionGranted = false
     let store = EKEventStore()
-    var calendar: EKCalendar! // this will crash T-T tapi udah keburu buru sorry ges
+    var calendar: EKCalendar?
     
     let calendarIDKey = "calendar_id"
     
-    init() {
-        
-        do {
-            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
-            print("connected calendar = \(calendar.title)")
-        } catch CalendarError.CError(let errorMsg) {
-            alertMessage = "\(errorMsg)"
-            showAlert = true
-        }
-        catch {
-            print("Error: \(error)" )
-        }
-        // belom handle kalau tidak ada default Calendar, saat membuat calendar bingung pilih sourcenya...
-        
-        store.requestFullAccessToEvents { granted, err in
-            DispatchQueue.main.async {
-                self.permissionGranted = granted
-                if !granted {
-                    self.alertMessage = "Tolong kasih permissions untuk access calendar anda"
-                    self.showAlert = true
-                    return
-                }
-            }
-        }
-        
-        
-        do {
-            try store.saveCalendar(calendar, commit: true)
-        }
-        catch {
-            alertMessage = "Failed to save calendar"
-            showAlert = true
-        }
-
-    }
+    init() { }
     
     // returns event identifier
     func syncEvent(_ schedule: ScheduleItemData) {
@@ -119,6 +85,29 @@ class EKManager {
             targetClosure()
         }
     }
+    func setCalendar() {
+        do {
+            calendar = try getCalendar() // saya bingung sendiri sama sourcenya
+            print("connected calendar = \(calendar?.title ?? "nil" )")
+        } catch CalendarError.CError(let errorMsg) {
+            alertUser("\(errorMsg)")
+            return
+        }
+        catch {
+            print("error: \(error)" )
+            return
+        }
+        
+        if let unwrappedCalendar = calendar {
+            do {
+                try store.saveCalendar(unwrappedCalendar, commit: true) // crash if calendar is not present
+            }
+            catch {
+                alertUser("Failed to save calendar")
+                return
+            }
+        }
+    }
     
     func createGOPQCalendar() -> EKCalendar {
         let newCalendar = EKCalendar(for: .event, eventStore: store)
@@ -153,21 +142,24 @@ class EKManager {
     }
     
     func findBestSource()-> EKSource {
+        if let defaultSource = store.defaultCalendarForNewEvents?.source {
+            return defaultSource
+        }
         if let iCloudSource  = store.sources.first(where: {$0.sourceType == .calDAV}) {
             return iCloudSource
         }
         if let local = store.sources.first(where: {$0.sourceType == .local}) {
             return local
         }
-        if let defaultSource = store.defaultCalendarForNewEvents?.source {
-            return defaultSource
-        }
         if let firstSource = store.sources.first {
             return firstSource
         }
-        alertMessage = "Calendar tidak ada source"
-        showAlert = true
+        alertUser("Calendar tidak ada source")
         return EKSource() // jujur ini kek jelek bgt cmn kek aku udah males hehe (this will def crash the app)
+    }
+    func alertUser(_ msg: String) {
+        alertMessage  = msg
+        showAlert = true
     }
     
     func removeEvent(_ schedule: ScheduleItemData) {
@@ -178,10 +170,12 @@ class EKManager {
                     print("remove event successful \(event.title ?? "no title") ")
                 }
                 catch {
-                    print("failed to remove event : \(error)")
+                    self.alertUser("failed to remove event : \(error.localizedDescription)")
+                    print("failed to remove event : \(error.localizedDescription)")
                 }
             }
             else {
+                self.alertUser("no event found")
                 print("no event found")
             }
         }

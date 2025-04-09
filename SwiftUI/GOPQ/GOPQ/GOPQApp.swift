@@ -6,11 +6,22 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import SwiftData
+
+@Observable
+class AppGlobal{
+    var showImportSheet = false
+    
+    init() {
+        
+    }
+}
 
 @main
 struct GOPQApp: App {
     @Environment(\.scenePhase) private var scenePhase // .background if close to termination
+    @State var appGlobal = AppGlobal()
     @State var csvController = CSVController()
     @State var observableScheduleController = ScheduleController()
     @State var userdata = UserData()
@@ -27,6 +38,15 @@ struct GOPQApp: App {
                         } message: {
                             Text(observableScheduleController.ekmanager.alertMessage)
                         }
+                        .fileImporter(
+                            isPresented: $appGlobal.showImportSheet,
+                            allowedContentTypes: [
+                                UTType.commaSeparatedText,
+                                UTType(filenameExtension: "csv")!
+                            ]
+                        ) { result in
+                            observableScheduleController.set( csvController.handleFileImport(for: result), name: userdata.username)
+                        }
                 }
             }
         }
@@ -35,6 +55,7 @@ struct GOPQApp: App {
                 observableScheduleController.saveToSwiftData()
             }
         }
+        .environment(appGlobal)
         .environment(csvController)
         .environment(observableScheduleController)
         .environment(userdata)
