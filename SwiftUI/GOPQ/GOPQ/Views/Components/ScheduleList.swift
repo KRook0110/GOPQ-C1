@@ -11,16 +11,16 @@ import UniformTypeIdentifiers
 
 struct ScheduleList: View {
 
-    @State var showImportSheet: Bool = false
     @Environment(CSVController.self) var csvController
     @Environment(ScheduleController.self) var schedules
     @Environment(UserData.self) var userdata
+    @Environment(AppGlobal.self) var appGlobal
     
     var body: some View {
         if schedules.data.isEmpty {
             Spacer()
             Button {
-                showImportSheet = true
+                appGlobal.showImportSheet = true
             } label: {
                 VStack (spacing: 12){
                     ImportScheduleListButton()
@@ -34,15 +34,6 @@ struct ScheduleList: View {
                 }.padding(.init(top: 16, leading: 16, bottom: 12, trailing: 16))
                 .background(.darkGray)
                 .cornerRadius(20)
-            }
-            .fileImporter(
-                isPresented: $showImportSheet,
-                allowedContentTypes: [
-                    UTType.commaSeparatedText,
-                    UTType(filenameExtension: "csv")!
-                ]
-            ) { result in
-                schedules.set( csvController.handleFileImport(for: result), name: userdata.username)
             }
             Spacer()
         }

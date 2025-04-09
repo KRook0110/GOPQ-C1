@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 struct NavigationBar: View {
     
     @State var showMapSheet: Bool = false
+    @Environment(AppGlobal.self) private var appGlobal
     
     var body: some View {
         HStack {
@@ -25,8 +26,11 @@ struct NavigationBar: View {
             
             HStack(spacing: 16) {
                 
-                ImportScheduleListButton()
-                    .frame(width: 28)
+                Button { appGlobal.showImportSheet = true}
+                label: {
+                    ImportScheduleListButton()
+                        .frame(width: 28)
+                }
 
                 Button { showMapSheet = true } label: {
                     Image(systemName: "map.fill")
