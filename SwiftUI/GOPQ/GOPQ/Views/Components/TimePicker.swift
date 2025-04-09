@@ -17,23 +17,27 @@ struct TimePicker: View {
     var isPickerVisible: Bool {
         activePicker == id
     }
-
+    
     var body: some View {
-        VStack( spacing: 0) {
-            LabeledContent {
-                Button(action: {
-                    withAnimation {
-                        activePicker = (activePicker == id) ? .none : id
-                    }
-                }) {
-                    Text(String(format: "%02d:%02d", hour, minute))
-                        .foregroundStyle(.white.opacity(0.7))
-                        .multilineTextAlignment(.trailing)
-                        .frame(minWidth: 60, alignment: .trailing)
-                }
-                .buttonStyle(.plain)
-            } label: {
+        VStack(spacing: 0) {
+            HStack {
                 Text(label)
+                    .foregroundColor(.white)
+                Spacer()
+                Text(String(format: "%02d:%02d", hour, minute))
+                    .foregroundColor(.white.opacity(0.7))
+                    .multilineTextAlignment(.trailing)
+                    .frame(alignment: .trailing)
+                    .padding(5)
+                    .background(Color.gray.opacity(0.4))
+                    .cornerRadius(5)
+            }
+            .background(Color.clear)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation {
+                    activePicker = activePicker == id ? .none : id
+                }
             }
             
             if isPickerVisible {
@@ -65,7 +69,6 @@ struct TimePicker: View {
                         }
                         .background(.clear)
                         .cornerRadius(10)
-                        
                     }
                     .padding(.vertical, 8)
                 }
