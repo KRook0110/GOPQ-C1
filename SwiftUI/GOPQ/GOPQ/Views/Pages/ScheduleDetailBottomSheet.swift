@@ -69,7 +69,7 @@ struct ScheduleDetailBottomSheet: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    TimePicker(label: "Starts", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute)
+                    TimePicker(label: "Mulai", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute)
                         .padding()
                         .background(.darkGray)
                         .clipShape(
@@ -80,7 +80,7 @@ struct ScheduleDetailBottomSheet: View {
                         )
                     Divider().background(.darkGray)
 
-                    TimePicker(label: "Ends", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
+                    TimePicker(label: "Berakhir", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
                         .padding()
                         .background(.darkGray)
                     Divider().background(.darkGray)
@@ -93,7 +93,7 @@ struct ScheduleDetailBottomSheet: View {
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
-                        Text("Location")
+                        Text("Lokasi")
                     }.onTapGesture {
                         isFocusedLocation = true
                     }
@@ -109,7 +109,7 @@ struct ScheduleDetailBottomSheet: View {
                         .foregroundStyle(.white.opacity(0.7))
                         .multilineTextAlignment(.trailing)
                     } label: {
-                        Text("Message")
+                        Text("Pesan")
                     }
                     .onTapGesture {
                         isFocusedMessage = true
@@ -118,7 +118,7 @@ struct ScheduleDetailBottomSheet: View {
                     .background(.darkGray)
                     Divider().background(.darkGray)
                     
-                    MenuPicker(label: "Alert", selectedOption: $menuOption)
+                    MenuPicker(label: "Pengingat", selectedOption: $menuOption)
                         .padding()
                         .background(.darkGray)
                         .clipShape(
@@ -135,7 +135,7 @@ struct ScheduleDetailBottomSheet: View {
                         isPresented = false
                         removeSchedule = true
                     } label: {
-                        Text("Delete Schedule")
+                        Text("Hapus Jadwal")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .foregroundColor(.red)

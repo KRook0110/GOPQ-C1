@@ -13,7 +13,6 @@ enum CalendarError: Error {
     case CError(String)
 }
 
-@MainActor
 @Observable
 class EKManager {
     
@@ -28,62 +27,62 @@ class EKManager {
     
     // returns event identifier
     func syncEvent(_ schedule: ScheduleItemData) {
-        print("Sebelum Access \(permissionGranted)")
-        requestAccess()
-        print("Setelah Access \(permissionGranted)")
-        if !permissionGranted {
-            return
+        requestAccess {
+            if !self.permissionGranted {
+                return
+            }
+            
+            var targetevent: EKEvent
+            if let event = self.store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
+                targetevent = event
+            }
+            else { // create new event
+                targetevent = EKEvent(eventStore: self.store)
+            }
+            
+            targetevent.location = schedule.location
+            targetevent.title = schedule.message
+            targetevent.notes = "This is a gopq auto generated event"
+            targetevent.startDate = schedule.startTime
+            targetevent.endDate = schedule.endTime
+            targetevent.calendar = self.calendar
+            while let alarm = targetevent.alarms?.last {
+                targetevent.removeAlarm(alarm)
+            }
+            if let offset = schedule.alertOffset{
+                targetevent.addAlarm(EKAlarm(relativeOffset: Double( -offset * 60)))
+            }
+            //        print("before : ", targetevent.eventIdentifier ?? "nil")
+            do {
+                try self.store.save(targetevent, span: .thisEvent, commit: true)
+            }
+            catch {
+                self.alertUser("Failed to save event: \(error.localizedDescription)")
+                print("Failed to save event : \(error)")
+            }
+            //        print("after : ", targetevent.eventIdentifier ?? "nil")
+            schedule.eventID = targetevent.eventIdentifier ?? ""
         }
-        
-        var targetevent: EKEvent
-        if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
-            targetevent = event
-        }
-        else { // create new event
-            targetevent = EKEvent(eventStore: store)
-        }
-        
-        targetevent.location = schedule.location
-        targetevent.title = schedule.message
-        targetevent.notes = "This is a gopq auto generated event"
-        targetevent.startDate = schedule.startTime
-        targetevent.endDate = schedule.endTime
-        targetevent.calendar = calendar
-        while let alarm = targetevent.alarms?.last {
-            targetevent.removeAlarm(alarm)
-        }
-        if let offset = schedule.alertOffset{
-            targetevent.addAlarm(EKAlarm(relativeOffset: Double( -offset * 60)))
-        }
-//        print("before : ", targetevent.eventIdentifier ?? "nil")
-        do {
-            try store.save(targetevent, span: .thisEvent, commit: true)
-        }
-        catch {
-            alertMessage = "Failed to save event: \(error)"
-            showAlert = true
-            print("Failed to save event : \(error)")
-        }
-//        print("after : ", targetevent.eventIdentifier ?? "nil")
-        schedule.eventID = targetevent.eventIdentifier ?? ""
     }
     
-    func requestAccess() {
+    
+    
+    func requestAccess(_ targetClosure: @escaping () -> Void) {
         if permissionGranted {
-            return
+            targetClosure()
+            return 
         }
-        
         store.requestFullAccessToEvents { granted, err in
-            self.permissionGranted = granted
             if !granted {
                 self.alertUser("Tolong kasih permissions untuk access calendar anda")
                 return
             }
-            else {
+            self.permissionGranted = granted
+            if self.calendar == nil {
                 self.setCalendar()
             }
+            targetClosure()
         }
-        
     }
     
     func setCalendar() {
@@ -167,22 +166,19 @@ class EKManager {
     }
     
     func removeEvent(_ schedule: ScheduleItemData) {
-        requestAccess()
-        if !permissionGranted {
-            return
-        }
-        
-        if let event = store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
-            do {
-                try store.remove(event, span: .thisEvent)
-                print("remove event successful \(event.title ?? "no title") ")
+        requestAccess {
+            if let event = self.store.event(withIdentifier: schedule.eventID), !schedule.eventID.isEmpty {
+                do {
+                    try self.store.remove(event, span: .thisEvent)
+                    print("remove event successful \(event.title ?? "no title") ")
+                }
+                catch {
+                    print("failed to remove event : \(error)")
+                }
             }
-            catch {
-                print("failed to remove event : \(error)")
+            else {
+                print("no event found")
             }
-        }
-        else {
-            print("no event found")
         }
     }
     

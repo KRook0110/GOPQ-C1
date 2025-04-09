@@ -35,7 +35,7 @@ struct ScheduleItem: View {
             Button {
                 showBottomSheet = true
             } label: {
-                Text("Edit")
+                Text("Ubah")
                     .padding(.trailing, xPadding)
             }
         }.sheet(isPresented: $showBottomSheet) {

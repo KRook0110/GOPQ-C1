@@ -23,7 +23,7 @@ struct home: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Selamat pagi,")
-                        .font(.title2)
+                        .font(.body)
                         .foregroundColor(.white)
                     Text(userdata.username)
                         .font(.title2)
@@ -31,6 +31,7 @@ struct home: View {
                         .foregroundColor(.white)
                     Text(Date.now.formatted(date: .complete, time: .omitted))
                         .foregroundColor(.gray)
+                        .font(.body)
                 }.padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
