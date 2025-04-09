@@ -8,15 +8,31 @@
 import SwiftUI
 
 struct SplashScreen: View {
+    
+    enum AlertType: Identifiable {
+        case error(String)
+        case confirmation(String)
+        
+        var id: String {
+            switch self {
+            case .error(let message):
+                return "error-\(message)"
+            case .confirmation(let message):
+                return "confirmation-\(message)"
+            }
+        }
+    }
+    
     @Environment(UserData.self) var userdata
     @State private var usernameBuffer: String = ""
+    @State private var activeAlert: AlertType? = nil
+    
     var body: some View {
         ZStack{
             Color.black.ignoresSafeArea()
             
             VStack {
                 Image("gopq")
-                 
                 
                 Text("Silahkan Masukkan Nama Lengkap Anda!")
                     .foregroundStyle(.white).padding()
@@ -30,7 +46,11 @@ struct SplashScreen: View {
                     .cornerRadius(15)
                 
                 Button {
-                    userdata.username = usernameBuffer
+                    if usernameBuffer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        activeAlert = .error("Nama lengkap harus diisi.")
+                    } else {
+                        activeAlert = .confirmation("Apakah nama yang Anda masukkan: \(usernameBuffer) sudah benar?")
+                    }
                 } label: {
                     Text("Konfirmasi")
                         .padding(10)
@@ -39,7 +59,26 @@ struct SplashScreen: View {
                         .cornerRadius(8)
                         .frame(width:300)
                         .padding(.top)
-                       
+                    
+                }
+            }
+            .alert(item: $activeAlert) { alert in
+                switch alert {
+                case .error(let message):
+                    return Alert(
+                        title: Text("Peringatan"),
+                        message: Text(message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .confirmation(let message):
+                    return Alert(
+                        title: Text("Konfirmasi"),
+                        message: Text(message),
+                        primaryButton: .default(Text("Simpan")) {
+                            userdata.username = usernameBuffer
+                        },
+                        secondaryButton: .cancel(Text("Batal"))
+                    )
                 }
             }
         }
