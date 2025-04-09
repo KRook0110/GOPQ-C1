@@ -170,8 +170,8 @@ struct ScheduleDetailBottomSheet: View {
                     }
 
                     Button(role: .destructive) {
-                        isPresented = false
-                        removeSchedule = true
+                            isPresented = false
+                            removeSchedule = true
                     } label: {
                         Text("Hapus Jadwal")
                             .frame(maxWidth: .infinity)
@@ -195,23 +195,27 @@ struct ScheduleDetailBottomSheet: View {
         .background(Color.black.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .onDisappear {
-            if removeSchedule {
-                schedules.remove(id: schedule.id)
-            }
-            if saveSchedule {
-                tempSchedule.startTime = makeTime(hour: startHour, min: startMinute)
-                tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
-                schedules.update(target: tempSchedule)
+            withAnimation {
+                if removeSchedule {
+                    schedules.remove(id: schedule.id)
+                }
+                if saveSchedule {
+                    tempSchedule.startTime = makeTime(hour: startHour, min: startMinute)
+                    tempSchedule.endTime = makeTime(hour: endHour, min: endMinute)
+                    schedules.update(target: tempSchedule)
+                }
             }
         }
         .onAppear {
-            let start = Calendar.current.dateComponents([.hour, .minute], from: schedule.startTime)
-            let end = Calendar.current.dateComponents([.hour, .minute], from: schedule.endTime)
-
-            startHour = start.hour ?? 0
-            startMinute = start.minute ?? 0
-            endHour = end.hour ?? 0
-            endMinute = end.minute ?? 0
+            withAnimation {
+                let start = Calendar.current.dateComponents([.hour, .minute], from: schedule.startTime)
+                let end = Calendar.current.dateComponents([.hour, .minute], from: schedule.endTime)
+                
+                startHour = start.hour ?? 0
+                startMinute = start.minute ?? 0
+                endHour = end.hour ?? 0
+                endMinute = end.minute ?? 0
+            }
         }
         .alert("Peringatan", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}

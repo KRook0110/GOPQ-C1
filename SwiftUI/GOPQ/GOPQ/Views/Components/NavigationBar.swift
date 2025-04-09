@@ -11,16 +11,24 @@ import UniformTypeIdentifiers
 struct NavigationBar: View {
     
     @State var showMapSheet: Bool = false
+    @Environment(ScheduleController.self) private var scheduleController
+    @Environment(UserData.self) private var userData
     @Environment(AppGlobal.self) private var appGlobal
     
     var body: some View {
         HStack {
-            Image("gopq")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 30, height: 45)
-                .padding(.leading, 15)
-                .padding(.trailing, 30)
+            // This Button is for the exhibition, to reset the entire app
+            Button {
+                scheduleController.reset()
+                userData.username = ""
+            } label: {
+                Image("gopq")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 45)
+                    .padding(.leading, 15)
+                    .padding(.trailing, 30)
+            }
             
             Spacer()
             

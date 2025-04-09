@@ -25,18 +25,29 @@ import SwiftData
         self.set(source)
     }
     
+    func reset() {
+        while !data.isEmpty {
+            remove(id: data.last!.id) // I'm sure that the data is not empty
+        }
+    }
+    
     func set(_ source: [ScheduleItemData], name: String? = nil) {
         if let unwrappedName = name {
-            self.data = source.filter {
-                $0.employeeName == unwrappedName
+            let filteredScheduleData = source.filter {
+                $0.employeeName.lowercased() == unwrappedName.lowercased()
+            }
+            for scheduleData in filteredScheduleData {
+                self.data.append(scheduleData)
             }
         }
         else {
             self.data = source
         }
+        
         for schedule in data {
             ekmanager.syncEvent(schedule)
         }
+        
         self.data.sort { (lhs, rhs) -> Bool in
             compare(lhs, rhs)
         }
