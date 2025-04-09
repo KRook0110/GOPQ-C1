@@ -13,7 +13,7 @@ struct TimePicker: View {
     @Binding var activePicker: PickerOptions
     @Binding var hour: Int
     @Binding var minute: Int
-    
+
     var isPickerVisible: Bool {
         activePicker == id
     }

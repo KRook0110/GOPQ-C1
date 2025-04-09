@@ -48,7 +48,7 @@ struct MapSheet: View {
 //                    }
 //                }
 //                .padding()
-                ZoomableImage(imageName: "GOP Map")
+                ZoomableImage(imageName: "GOP map")
 
                 Spacer()
             }
