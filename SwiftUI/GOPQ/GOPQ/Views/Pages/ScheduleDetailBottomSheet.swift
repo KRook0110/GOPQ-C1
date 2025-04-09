@@ -28,7 +28,7 @@ struct ScheduleDetailBottomSheet: View {
 
     @State private var tempSchedule: ScheduleItemData
     @Environment(ScheduleController.self) private var schedules
-    @State private var pickerOption: PickerOptions = .start
+    @State private var pickerOption: PickerOptions = .none
     @State private var removeSchedule: Bool = false
     @State private var saveSchedule: Bool = false
 
@@ -74,8 +74,53 @@ struct ScheduleDetailBottomSheet: View {
             .padding(.vertical, 20)
 
             ScrollView {
-                VStack(spacing: 0) {
+                VStack(spacing: 20) {
                     TimePicker(label: "Mulai", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute)
+                        .padding()
+                        .background(.darkGray)
+                        .cornerRadius(15)
+                        .onChange(of: pickerOption) { oldValue, newValue in
+                            if newValue == .start || newValue == .end {
+                                isFocusedLocation = false
+                                isFocusedMessage = false
+                                focusInput = nil
+                            }
+                        }
+//                    Divider().background(.darkGray)
+
+                    TimePicker(label: "Berakhir", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
+                        .padding()
+                        .background(.darkGray)
+                        .cornerRadius(15)
+                        .onChange(of: pickerOption) { oldValue, newValue in
+                            if newValue == .start || newValue == .end {
+                                isFocusedLocation = false
+                                isFocusedMessage = false
+                                focusInput = nil
+                            }
+                        }
+//                    Divider().background(.darkGray)
+
+                    VStack (spacing:0){
+                        
+                        LabeledContent {
+                            TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
+                                Text("Location")
+                            }
+                            .focused($isFocusedLocation)
+                            .foregroundStyle(.white.opacity(0.7))
+                            .multilineTextAlignment(.trailing)
+                            .onChange(of: isFocusedLocation) { oldValue, newValue in
+                                if newValue {
+                                    pickerOption = .none
+                                }
+                            }
+                        } label: {
+                            Text("Lokasi")
+                        }.onTapGesture {
+                            isFocusedLocation = true
+                            pickerOption = .none
+                        }
                         .padding()
                         .background(.darkGray)
                         .clipShape(
@@ -84,58 +129,45 @@ struct ScheduleDetailBottomSheet: View {
                                 topTrailingRadius: 15
                             )
                         )
-                    Divider().background(.darkGray)
-
-                    TimePicker(label: "Berakhir", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute)
+                        
+                        Divider().background(.darkGray)
+                        
+                        LabeledContent {
+                            TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
+                                Text("Message")
+                            }
+                            .focused($isFocusedMessage)
+                            .foregroundStyle(.white.opacity(0.7))
+                            .multilineTextAlignment(.trailing)
+                            .onChange(of: isFocusedMessage) { oldValue, newValue in
+                                if newValue {
+                                    pickerOption = .none
+                                }
+                            }
+                        } label: {
+                            Text("Pesan")
+                        }
+                        .onTapGesture {
+                            isFocusedMessage = true
+                            pickerOption = .none
+                        }
                         .padding()
                         .background(.darkGray)
-                    Divider().background(.darkGray)
-
-                    LabeledContent {
-                        TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
-                            Text("Location")
-                        }
-                        .focused($isFocusedLocation)
-                        .foregroundStyle(.white.opacity(0.7))
-                        .multilineTextAlignment(.trailing)
-                    } label: {
-                        Text("Lokasi")
-                    }.onTapGesture {
-                        isFocusedLocation = true
-                    }
-                    .padding()
-                    .background(.darkGray)
-                    Divider().background(.darkGray)
-
-                    LabeledContent {
-                        TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
-                            Text("Message")
-                        }
-                        .focused($isFocusedMessage)
-                        .foregroundStyle(.white.opacity(0.7))
-                        .multilineTextAlignment(.trailing)
-                    } label: {
-                        Text("Pesan")
-                    }
-                    .onTapGesture {
-                        isFocusedMessage = true
-                    }
-                    .padding()
-                    .background(.darkGray)
-                    Divider().background(.darkGray)
-                    
-                    MenuPicker(label: "Pengingat", selectedOption: $menuOption)
-                        .padding()
-                        .background(.darkGray)
-                        .clipShape(
-                            .rect(
-                                bottomLeadingRadius: 15,
-                                bottomTrailingRadius: 15
+                        Divider().background(.darkGray)
+                        
+                        MenuPicker(label: "Pengingat", selectedOption: $menuOption)
+                            .padding()
+                            .background(.darkGray)
+                            .clipShape(
+                                .rect(
+                                    bottomLeadingRadius: 15,
+                                    bottomTrailingRadius: 15
+                                )
                             )
-                        )
-                        .onChange(of: menuOption) {
-                            tempSchedule.alertOffset = menuOption.minutes
-                        }
+                            .onChange(of: menuOption) {
+                                tempSchedule.alertOffset = menuOption.minutes
+                            }
+                    }
 
                     Button(role: .destructive) {
                         isPresented = false

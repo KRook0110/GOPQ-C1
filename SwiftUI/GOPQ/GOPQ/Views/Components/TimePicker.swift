@@ -19,7 +19,7 @@ struct TimePicker: View {
     }
     
     var body: some View {
-        VStack( spacing: 0) {
+        VStack(spacing: 0) {
             HStack {
                 Text(label)
                     .foregroundColor(.white)
@@ -27,13 +27,16 @@ struct TimePicker: View {
                 Text(String(format: "%02d:%02d", hour, minute))
                     .foregroundColor(.white.opacity(0.7))
                     .multilineTextAlignment(.trailing)
-                    .frame(minWidth: 60, alignment: .trailing)
+                    .frame(alignment: .trailing)
+                    .padding(5)
+                    .background(Color.gray.opacity(0.4))
+                    .cornerRadius(5)
             }
             .background(Color.clear)
             .contentShape(Rectangle())
             .onTapGesture {
                 withAnimation {
-                    activePicker = (activePicker == id) ? .none : id
+                    activePicker = activePicker == id ? .none : id
                 }
             }
             
@@ -66,7 +69,6 @@ struct TimePicker: View {
                         }
                         .background(.clear)
                         .cornerRadius(10)
-                        
                     }
                     .padding(.vertical, 8)
                 }

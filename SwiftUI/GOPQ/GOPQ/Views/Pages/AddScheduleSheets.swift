@@ -19,7 +19,7 @@ struct AddScheduleSheets: View {
     
     @State private var tempSchedule: ScheduleItemData
     @Environment(ScheduleController.self ) private var schedules
-    @State private var pickerOption: PickerOptions = .start
+    @State private var pickerOption: PickerOptions = .none
     @State private var removeSchedule: Bool = false
     @State private var saveSchedule: Bool = false
     
@@ -73,67 +73,92 @@ struct AddScheduleSheets: View {
             .padding(20)
             
             ScrollView {
-                VStack(spacing: 0) {
+                VStack(spacing: 20) {
                     TimePicker(label: "Mulai", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute).padding()
                         .background(.darkGray)
                         .contentShape(Rectangle())
-                        .clipShape(
-                            .rect(
-                                topLeadingRadius: 15,
-                                topTrailingRadius: 15
-                            )
-                        )
-                    Divider().background(.darkGray)
+                        .cornerRadius(15)
+                        .onChange(of: pickerOption) { oldValue, newValue in
+                            if newValue == .start || newValue == .end {
+                                isFocusedLocation = false
+                                isFocusedMessage = false
+                                focusInput = nil
+                            }
+                        }
+                    //                    Divider().background(.darkGray)
                     
                     
                     TimePicker(label: "Berakhir", id: .end, activePicker: $pickerOption, hour: $endHour, minute: $endMinute).padding()
                         .background(.darkGray).contentShape(Rectangle())
-                    Divider().background(.darkGray)
-                    
-                    
-                    LabeledContent {
-                        TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
-                            Text("Lokasi")
+                        .cornerRadius(15)
+                        .onChange(of: pickerOption) { oldValue, newValue in
+                            if newValue == .start || newValue == .end {
+                                isFocusedLocation = false
+                                isFocusedMessage = false
+                                focusInput = nil
+                            }
                         }
-                        .focused($isFocusedLocation)
-                        .foregroundStyle(.white.opacity(0.7))
-                        .multilineTextAlignment(.trailing)
-                    } label: {
-                        Text("Lokasi")
-                    }.padding()
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            isFocusedLocation = true
-                        }
-                        .background(.darkGray)
-                    Divider().background(.darkGray)
+                    //                    Divider().background(.darkGray)
                     
                     
-                    LabeledContent {
-                        TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
-                            Text("Pesan")
-                        }.focused($isFocusedMessage)
+                    VStack (spacing: 0){
+                        LabeledContent {
+                            TextField(text: $tempSchedule.location, prompt: Text("Kosong")) {
+                                Text("Lokasi")
+                            }
+                            .focused($isFocusedLocation)
                             .foregroundStyle(.white.opacity(0.7))
                             .multilineTextAlignment(.trailing)
-                    } label: {
-                        Text("Pesan")
-                    }.contentShape(Rectangle())
-                        .onTapGesture{
-                            isFocusedMessage = true
-                        }
-                        .padding()
-                        .background(.darkGray)
-                    Divider().background(.darkGray)
-                    
-                    
-                    MenuPicker(label: "Pengingat", selectedOption: $menuOption).padding()
-                        .background(.darkGray)
-                        .clipShape(
-                            .rect(
-                                bottomLeadingRadius: 15,
-                                bottomTrailingRadius: 15
+                            .onChange(of: isFocusedLocation) { oldValue, newValue in
+                                if newValue {
+                                    pickerOption = .none
+                                }
+                            }
+                        } label: {
+                            Text("Lokasi")
+                        }.padding()
+                            .contentShape(Rectangle())
+                            .background(.darkGray)
+                            .clipShape(
+                                .rect(
+                                    topLeadingRadius: 15,
+                                    topTrailingRadius: 15
+                                )
                             )
-                        )
+                            .onTapGesture {
+                                isFocusedLocation = true
+                                pickerOption = .none
+                            }
+                        
+                        Divider().background(.darkGray)
+                        
+                        
+                        LabeledContent {
+                            TextField(text: $tempSchedule.message, prompt: Text("Kosong")) {
+                                Text("Pesan")
+                            }.focused($isFocusedMessage)
+                                .foregroundStyle(.white.opacity(0.7))
+                                .multilineTextAlignment(.trailing)
+                        } label: {
+                            Text("Pesan")
+                        }.contentShape(Rectangle())
+                            .onTapGesture{
+                                isFocusedMessage = true
+                            }
+                            .padding()
+                            .background(.darkGray)
+                        Divider().background(.darkGray)
+                        
+                        
+                        MenuPicker(label: "Pengingat", selectedOption: $menuOption).padding()
+                            .background(.darkGray)
+                            .clipShape(
+                                .rect(
+                                    bottomLeadingRadius: 15,
+                                    bottomTrailingRadius: 15
+                                )
+                            )
+                    }
                 }
                 .padding()
             }.simultaneousGesture(
