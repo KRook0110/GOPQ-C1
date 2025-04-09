@@ -31,6 +31,7 @@ struct ScheduleDetailBottomSheet: View {
     @State private var pickerOption: PickerOptions = .none
     @State private var removeSchedule: Bool = false
     @State private var saveSchedule: Bool = false
+    @State private var scheduleDuration: Int = 120 * 60
 
     @State private var startHour: Int = 0
     @State private var startMinute: Int = 0
@@ -39,13 +40,48 @@ struct ScheduleDetailBottomSheet: View {
     @State private var showAlert: Bool = false
     @State private var menuOption: MenuOption = .none
     @State private var errorMessage: String = ""
+    private var startTimeList: [Int] = []
+    private var endTimeList: [Int]  = []
     
 
     init(sheetControl isPresented: Binding<Bool>, schedule: ScheduleItemData) {
         self.schedule = schedule
         self._isPresented = isPresented
         self._tempSchedule = State(initialValue: schedule)
+        
+        let startTimeDate = makeTime(hour: startHour, min: startMinute)
+        let endTimeDate = makeTime(hour: endHour, min: endMinute)
+        scheduleDuration = Int(endTimeDate.timeIntervalSince(startTimeDate))
     }
+    
+    // yes I know moveEndAccordingToStart and change DurationAccordingToEnd will eventually create an infinite loop calling each other but now only god knows how it didn't
+    func moveEndAccordingToStart() {
+        let startTimeDate = makeTime(hour: startHour, min: startMinute)
+        let endTimeDate = startTimeDate.addingTimeInterval(TimeInterval(scheduleDuration))
+        
+        let startcomponents = Calendar.current.dateComponents([.day, .hour, .minute], from: startTimeDate)
+        let endcomponents = Calendar.current.dateComponents([.day, .hour, .minute], from: endTimeDate)
+        if startcomponents.day != endcomponents.day {
+            endHour = 23
+            endMinute = 59
+        }
+        else {
+            endHour = endcomponents.hour ?? 0
+            endMinute = endcomponents.minute ?? 0
+        }
+    }
+    
+    func changeDurationAccordingToEnd() {
+        let startTime = makeTime(hour: startHour, min: startMinute)
+        let endTime = makeTime(hour: endHour, min: endMinute)
+        scheduleDuration = Int( endTime.timeIntervalSince(startTime))
+        if scheduleDuration < 60 {
+            startHour = endHour
+            startMinute = endMinute - 1
+            scheduleDuration = 60
+        }
+    }
+
 
     var body: some View {
         VStack {
@@ -55,7 +91,7 @@ struct ScheduleDetailBottomSheet: View {
                 }
                 Spacer()
                 Button {
-                    if startHour > endHour || startHour == endHour && startMinute >= endMinute {
+                    if startHour > endHour || startHour == endHour && startMinute > endMinute {
                         errorMessage = "Waktu mulai harus lebih awal dari waktu selesai."
                         showAlert = true
                     } else if tempSchedule.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -78,7 +114,10 @@ struct ScheduleDetailBottomSheet: View {
                     TimePicker(label: "Mulai", id: .start, activePicker: $pickerOption, hour: $startHour, minute: $startMinute)
                         .padding()
                         .background(.darkGray)
-                        .cornerRadius(15)
+                        .onChange(of: [startHour, startMinute] ) {
+                            moveEndAccordingToStart()
+                        }
+                       .cornerRadius(15)
                         .onChange(of: pickerOption) { oldValue, newValue in
                             if newValue == .start || newValue == .end {
                                 isFocusedLocation = false
@@ -98,6 +137,9 @@ struct ScheduleDetailBottomSheet: View {
                                 isFocusedMessage = false
                                 focusInput = nil
                             }
+                        }
+                        .onChange(of: [endHour, endMinute]){
+                            changeDurationAccordingToEnd()
                         }
 //                    Divider().background(.darkGray)
 
