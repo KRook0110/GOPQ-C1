@@ -33,7 +33,9 @@ struct SplashScreen: View {
             
             VStack {
                 Image("gopq")
-                
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width:50)
                 Text("Silahkan Masukkan Nama Lengkap Anda!")
                     .foregroundStyle(.white).padding()
                 
