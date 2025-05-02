@@ -33,7 +33,7 @@ struct MapSheet: View {
                     .padding()
                 }
 
-                ZoomableImage(imageName: "GOP map")
+                ZoomableImage(imageName: "GOP Map")
 
                 Spacer()
             }

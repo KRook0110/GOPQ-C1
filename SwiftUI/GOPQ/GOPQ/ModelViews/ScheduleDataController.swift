@@ -10,11 +10,27 @@ import SwiftData
 
 @MainActor
 @Observable class ScheduleController {
+    static let shared = ScheduleController()
     var data: [ScheduleItemData]
     var ekmanager = EKManager()
     
     init() {
         self.data = []
+        let context = ModelManager.shared.mainContext
+        let results = (try? context.fetch(FetchDescriptor<ScheduleItemData>())) ?? []
+        self.set(results)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(refreshData),
+                                               name: Notification.Name("ScheduleDataUpdated"),
+                                               object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func refreshData() {
         let context = ModelManager.shared.mainContext
         let results = (try? context.fetch(FetchDescriptor<ScheduleItemData>())) ?? []
         self.set(results)

@@ -22,3 +22,4 @@ struct ImportScheduleListButton: View {
                 .aspectRatio(contentMode: .fit)
     }
 }
+

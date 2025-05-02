@@ -8,6 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import SwiftData
+import AppIntents
 
 @Observable
 class AppGlobal{
@@ -25,6 +26,7 @@ struct GOPQApp: App {
     @State var csvController = CSVController()
     @State var observableScheduleController = ScheduleController()
     @State var userdata = UserData()
+    
     var body: some Scene {
         WindowGroup {
             Group {

@@ -204,20 +204,20 @@ struct AddScheduleSheets: View {
     }
 }
 
-#Preview {
-    ZStack {
-        Rectangle()
-            .fill(Color("ModularBackground"))
-            .ignoresSafeArea()
-        EnvironmentalTemp {
-            AddScheduleSheets(sheetControl: .constant(true), schedule: ScheduleItemData(
-                employeeName: "John Doe",
-                startTime: makeTime(hour: 10, min: 20),
-                endTime: makeTime(hour: 20, min: 30),
-                location: "Lobby 1",
-                message: "Hi hello",
-                soundName: "System.something"
-            ) )}
-    }
-}
+//#Preview {
+//    ZStack {
+//        Rectangle()
+//            .fill(Color("ModularBackground"))
+//            .ignoresSafeArea()
+//        EnvironmentalTemp {
+//            AddScheduleSheets(sheetControl: .constant(true), schedule: ScheduleItemData(
+//                employeeName: "John Doe",
+//                startTime: makeTime(hour: 10, min: 20),
+//                endTime: makeTime(hour: 20, min: 30),
+//                location: "Lobby 1",
+//                message: "Hi hello",
+//                soundName: "System.something"
+//            ) )}
+//    }
+//}
 
