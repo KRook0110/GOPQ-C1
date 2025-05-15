@@ -11,14 +11,14 @@ import SwiftData
 
 class ModelManager {
     static let shared: ModelContainer = {
-        
-        let configuration = ModelConfiguration(for: ScheduleItemData.self)
-        
+
+        let configuration = ModelConfiguration(for: ScheduleItemData.self, HashedScheduleList.self)
+
         do {
-            return try ModelContainer(for: ScheduleItemData.self, configurations: configuration)
+            return try ModelContainer(for: ScheduleItemData.self, HashedScheduleList.self, configurations: configuration)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
     }()
-    
+
 }

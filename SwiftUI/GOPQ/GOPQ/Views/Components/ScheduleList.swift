@@ -15,7 +15,7 @@ struct ScheduleList: View {
     @Environment(ScheduleController.self) var schedules
     @Environment(UserData.self) var userdata
     @Environment(AppGlobal.self) var appGlobal
-    
+
     var body: some View {
         if schedules.data.isEmpty {
             Spacer()
@@ -40,11 +40,10 @@ struct ScheduleList: View {
         else {
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    BorderLine()
+                    // BorderLine()
                     ForEach(schedules.data, id:\.id) { schedule in
                         ScheduleItem(schedule: schedule)
-                            .padding(18)
-                        BorderLine()
+                        // BorderLine()
                     }
                     //                ForEach(schedules.data, id: \.self) {schedule in
                     //                    VStack {

@@ -5,63 +5,82 @@
 //  Created by Shawn Andrew on 26/03/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @MainActor
-@Observable class ScheduleController {
+@Observable
+class ScheduleController {
     var data: [ScheduleItemData]
     var ekmanager = EKManager()
-    
+
+
+    // fall back
+    var namesInFileImport: Set<String> = []
+    var showFallbackAlert = false
+
+    var  showPickName: Bool = false
+
     init() {
         self.data = []
         let context = ModelManager.shared.mainContext
         let results = (try? context.fetch(FetchDescriptor<ScheduleItemData>())) ?? []
         self.set(results)
     }
-    
+
     init(_ source: [ScheduleItemData]) {
         self.data = []
         self.set(source)
     }
-    
+
     func reset() {
         while !data.isEmpty {
-            remove(id: data.last!.id) // I'm sure that the data is not empty
+            remove(id: data.last!.id)  // I'm sure that the data is not empty
         }
     }
-    
+
+    func checkHasName(_ source: [ScheduleItemData], name: String) -> Bool {
+        if let _ = source.firstIndex(where: {
+            schedule in
+            return schedule.employeeName == name
+        }) {
+            return true
+        }
+        return false
+    }
+
     func set(_ source: [ScheduleItemData], name: String? = nil) {
         if let unwrappedName = name {
             let filteredScheduleData = source.filter {
                 $0.employeeName.lowercased() == unwrappedName.lowercased()
             }
-            for scheduleData in filteredScheduleData {
-                self.data.append(scheduleData)
+            if !filteredScheduleData.isEmpty {
+                for scheduleData in filteredScheduleData {
+                    self.data.append(scheduleData)
+                }
             }
-        }
-        else {
+        } else {
             self.data = source
         }
-        
+
         for schedule in data {
             ekmanager.syncEvent(schedule)
         }
-        
+
         self.data.sort { (lhs, rhs) -> Bool in
             compare(lhs, rhs)
         }
     }
-    
-    func compare(_ lhs:ScheduleItemData, _ rhs:ScheduleItemData) -> Bool {
+
+    func compare(_ lhs: ScheduleItemData, _ rhs: ScheduleItemData) -> Bool {
         return lhs.startTime < rhs.startTime
     }
-    
-    func insert(_ item:ScheduleItemData) { // fucking slow when adding many values, sorry guys
+
+    func insert(_ item: ScheduleItemData) {  // fucking slow when adding many values, sorry guys
         ekmanager.syncEvent(item)
-        
+
         for i in 0..<data.count {
-            if !compare(data[i], item ) {
+            if !compare(data[i], item) {
                 data.insert(item, at: i)
                 return
             }
@@ -69,8 +88,7 @@ import SwiftData
         data.append(item)
         return
     }
-    
-    
+
     func update(target: ScheduleItemData, resort: Bool = true) {
         if let i = data.firstIndex(where: { $0.id == target.id }) {
             data[i] = target
@@ -82,19 +100,18 @@ import SwiftData
             ekmanager.syncEvent(data[i])
         }
     }
-    
+
     func remove(id: UUID) {
         if let i = data.firstIndex(where: { $0.id == id }) {
             ekmanager.removeEvent(data[i])
         }
-        data.removeAll(where: { $0.id == id})
+        data.removeAll(where: { $0.id == id })
     }
-    
-    
-    func saveToSwiftData() {
+
+    func saveToSwiftData() {  // jujur not the best way to do this tapi, it is what it is
         let context = ModelManager.shared.mainContext
         let descriptor = FetchDescriptor<ScheduleItemData>()
-        
+
         do {
             let allItems = try context.fetch(descriptor)
             for item in allItems {
@@ -109,4 +126,3 @@ import SwiftData
         }
     }
 }
-

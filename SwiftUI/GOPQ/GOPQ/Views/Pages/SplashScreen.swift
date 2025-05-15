@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct SplashScreen: View {
-    
+
     enum AlertType: Identifiable {
         case error(String)
         case confirmation(String)
-        
+
         var id: String {
             switch self {
             case .error(let message):
@@ -22,36 +22,39 @@ struct SplashScreen: View {
             }
         }
     }
-    
+
     @Environment(UserData.self) var userdata
     @State private var usernameBuffer: String = ""
     @State private var activeAlert: AlertType? = nil
-    
+    @FocusState private var focusText: Bool
+
     var body: some View {
-        ZStack{
+        ZStack {
             Color.black.ignoresSafeArea()
-            
+
             VStack {
                 Image("gopq")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width:50)
+                    .frame(width: 50)
                 Text("Silahkan Masukkan Nama Lengkap Anda!")
                     .foregroundStyle(.white).padding()
-                
-                
+
                 TextField("Nama Lengkap", text: $usernameBuffer)
+                    .focused($focusText)
                     .padding(10)
                     .background(.gray)
                     .foregroundColor(.white)
-                    .frame(width:200)
-                    .cornerRadius(15)
-                
+                    .frame(width: 200)
+                    .cornerRadius(8)
+
                 Button {
+                    focusText = false
                     if usernameBuffer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         activeAlert = .error("Nama lengkap harus diisi.")
                     } else {
-                        activeAlert = .confirmation("Apakah nama yang Anda masukkan: \(usernameBuffer) sudah benar?")
+                        activeAlert = .confirmation(
+                            "Apakah nama yang Anda masukkan: \(usernameBuffer) sudah benar?")
                     }
                 } label: {
                     Text("Konfirmasi")
@@ -59,9 +62,9 @@ struct SplashScreen: View {
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)
-                        .frame(width:300)
+                        .frame(width: 300)
                         .padding(.top)
-                    
+
                 }
             }
             .alert(item: $activeAlert) { alert in
@@ -77,7 +80,9 @@ struct SplashScreen: View {
                         title: Text("Konfirmasi"),
                         message: Text(message),
                         primaryButton: .default(Text("Simpan")) {
-                            userdata.username = usernameBuffer
+                            withAnimation {
+                                userdata.username = usernameBuffer
+                            }
                         },
                         secondaryButton: .cancel(Text("Batal"))
                     )

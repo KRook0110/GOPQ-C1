@@ -9,60 +9,42 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct NavigationBar: View {
-    
+
     @State var showMapSheet: Bool = false
     @Environment(ScheduleController.self) private var scheduleController
     @Environment(UserData.self) private var userData
     @Environment(AppGlobal.self) private var appGlobal
-    
+    @Environment(CSVController.self) private var csvController
+
     var body: some View {
         HStack {
             // This Button is for the exhibition, to reset the entire app
             Button {
+                csvController.reset()
                 scheduleController.reset()
                 userData.username = ""
+
             } label: {
-                Image("gopq")
+                Image("GOPQLogo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 30, height: 45)
-                    .padding(.leading, 15)
+                    .frame(height: 30)
+                    .padding(.leading, 32)
                     .padding(.trailing, 30)
             }
-            
+
             Spacer()
-            
-            HStack(spacing: 16) {
-                
-                Button { appGlobal.showImportSheet = true}
-                label: {
-                    ImportScheduleListButton()
-                        .frame(width: 28)
-                }
-
-                Button { showMapSheet = true } label: {
-                    Image(systemName: "map.fill")
-                        .font(.system(size: 25))
-                        .foregroundColor(.blue)
-
-                }
-                .sheet(isPresented: $showMapSheet) {
-                    MapSheet()
-                        .presentationBackground(.clear)
-                        .background(.clear)
-                }
-            }
         }
-        .padding()
-        .background(Color.black)
+        .padding(.bottom)
+        .padding(.top)
+        .background(Color("Neutral1"))
     }
 }
 
 #Preview {
     let csvController = CSVController()
-    
+
     EnvironmentalTemp {
         NavigationBar()
     }
 }
-
