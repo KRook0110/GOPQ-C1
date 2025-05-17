@@ -1,8 +1,8 @@
 //
-//  ScheduleDetailBottomSheet.swift
+//  EditScheduleSheets.swift
 //  GOPQ
 //
-//  Created by Shawn Andrew on 26/03/25.
+//  Created by Dicky Dharma Susanto on 02/05/25.
 //
 
 import SwiftUI
@@ -13,7 +13,7 @@ enum PickerOptions {
     case none
 }
 
-struct ScheduleDetailBottomSheet: View {
+struct EditScheduleSheets: View {
     var schedule: ScheduleItemData
     @Binding var isPresented: Bool
 
@@ -273,7 +273,7 @@ struct ScheduleDetailBottomSheet: View {
             .fill(Color("ModularBackground"))
             .ignoresSafeArea()
         EnvironmentalTemp {
-            ScheduleDetailBottomSheet(sheetControl: .constant(true), schedule: ScheduleItemData(
+            EditScheduleSheets(sheetControl: .constant(true), schedule: ScheduleItemData(
                 employeeName: "John Doe",
                 startTime: makeTime(hour: 10, min: 20),
                 endTime: makeTime(hour: 20, min: 30),

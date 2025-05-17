@@ -5,6 +5,8 @@
 //  Created by Shawn Andrew on 07/04/25.
 //
 
+#if os(iOS)
+
 import Foundation
 import EventKit
 import UIKit
@@ -182,3 +184,5 @@ class EKManager {
     }
     
 }
+
+#endif

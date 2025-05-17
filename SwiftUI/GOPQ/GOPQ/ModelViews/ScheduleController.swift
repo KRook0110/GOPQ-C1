@@ -30,6 +30,16 @@ import SwiftData
         NotificationCenter.default.removeObserver(self)
     }
     
+    func syncToWatch() {
+        Task {
+            await WatchConnector.shared.updateLocalSchedules()
+        }
+        
+        if WatchConnector.shared.isReachable {
+            WatchConnector.shared.sendDataToWatch()
+        }
+    }
+    
     @objc func refreshData() {
         let context = ModelManager.shared.mainContext
         let results = (try? context.fetch(FetchDescriptor<ScheduleItemData>())) ?? []
@@ -67,6 +77,7 @@ import SwiftData
         self.data.sort { (lhs, rhs) -> Bool in
             compare(lhs, rhs)
         }
+        syncToWatch()
     }
     
     func compare(_ lhs:ScheduleItemData, _ rhs:ScheduleItemData) -> Bool {
@@ -79,10 +90,12 @@ import SwiftData
         for i in 0..<data.count {
             if !compare(data[i], item ) {
                 data.insert(item, at: i)
+                syncToWatch()
                 return
             }
         }
         data.append(item)
+        syncToWatch()
         return
     }
     
@@ -96,6 +109,7 @@ import SwiftData
                 })
             }
             ekmanager.syncEvent(data[i])
+            syncToWatch()
         }
     }
     
