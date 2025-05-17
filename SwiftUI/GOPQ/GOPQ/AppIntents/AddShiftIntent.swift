@@ -13,13 +13,13 @@ struct AddShiftIntent: AppIntent {
     static var title: LocalizedStringResource = "Add Shift"
     static var description = IntentDescription("Add a new shift to your schedule.")
     
-    @Parameter(title: "Start Time")
+    @Parameter(title: "Waktu Mulai")
     var startTime: Date
     
-    @Parameter(title: "End Time")
+    @Parameter(title: "Waktu Selesai")
     var endTime: Date
     
-    @Parameter(title: "Location")
+    @Parameter(title: "Lokasi")
     var location: String
     
     @Parameter(title: "Employee Name", default: "Self")
@@ -31,7 +31,7 @@ struct AddShiftIntent: AppIntent {
     @Parameter(title: "Sound Name", default: "")
     var soundName: String
     
-    @Parameter(title: "Alert Minutes Before", default: 0)
+    @Parameter(title: "Alert Minutes Before", default: 5)
     var alertOffset: Int
     
     func perform() async throws -> some IntentResult & ProvidesDialog {
@@ -49,12 +49,12 @@ struct AddShiftIntent: AppIntent {
         }
         
         await MainActor.run {
-            // Simpan langsung ke SwiftData
+            
             let context = ModelManager.shared.mainContext
             context.insert(newShift)
             try? context.save()
             
-            // Sinkronkan dengan kalender
+            // sync kalender
             ScheduleController.shared.ekmanager.syncEvent(newShift)
             
             // Kirim notifikasi untuk update UI

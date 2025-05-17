@@ -44,31 +44,10 @@ struct ScheduleItem: View {
             }
         }
         .sheet(isPresented: $showBottomSheet) {
-            ScheduleDetailBottomSheet(sheetControl: $showBottomSheet, schedule: schedule)
+            EditScheduleSheets(sheetControl: $showBottomSheet, schedule: schedule)
                 .presentationCornerRadius(10)
                 .background(Color("ModularBackground"))
             
-        }
-    }
-}
-
-#Preview {
-    ZStack {
-        Rectangle()
-            .background(.black)
-            .ignoresSafeArea()
-        EnvironmentalTemp {
-            ScheduleItem(
-                schedule: 
-                    ScheduleItemData(
-                        employeeName: "James",
-                        startTime: makeTime(hour: 10, min: 20),
-                        endTime: makeTime(hour: 11, min: 30 ),
-                        location: "Lobby 1",
-                        message: "Hi hello",
-                        soundName: "System.something"
-                    )
-            )
         }
     }
 }

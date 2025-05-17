@@ -26,6 +26,7 @@ struct GOPQApp: App {
     @State var csvController = CSVController()
     @State var observableScheduleController = ScheduleController()
     @State var userdata = UserData()
+    @State private var watchConnector = WatchConnector.shared
     
     var body: some Scene {
         WindowGroup {
@@ -55,6 +56,15 @@ struct GOPQApp: App {
         .onChange(of: scenePhase, initial: false)  {
             if scenePhase == .background || scenePhase == .inactive {
                 observableScheduleController.saveToSwiftData()
+            } else if (scenePhase == .active) {
+                Task {
+                    await observableScheduleController.refreshData()
+                    await WatchConnector.shared.updateLocalSchedules()
+                    
+                    if watchConnector.isReachable {
+                        watchConnector.sendDataToWatch()
+                    }
+                }
             }
         }
         .environment(appGlobal)
