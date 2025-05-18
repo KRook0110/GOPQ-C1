@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ScheduleListView: View {
     
-    @Binding var schedules: [WatchScheduleItem]
+    @Binding var schedules: [ScheduleItemData]
     let deleteSchedule: (IndexSet) -> Void
     var navigateToAddSchedule: () -> Void
     
@@ -21,9 +21,8 @@ struct ScheduleListView: View {
                 }
             }
             .onDelete(perform: deleteSchedule)
-            
-            AddScheduleButton(action: navigateToAddSchedule)
         }
         .listStyle(.carousel)
+        AddScheduleButton(action: navigateToAddSchedule)
     }
 }

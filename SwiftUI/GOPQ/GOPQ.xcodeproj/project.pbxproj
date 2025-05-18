@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F06F5E32DD8DC6F00473977 /* DataContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F06F5C42DD8DC6F00473977 /* DataContext.swift */; };
+		0F06F5E42DD8DC6F00473977 /* DataContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F06F5C42DD8DC6F00473977 /* DataContext.swift */; };
 		0F65ED1E2DCB4294008BAD5C /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F65ED1D2DCB4294008BAD5C /* WatchConnectivity.framework */; };
 		0F793F462DD61F8200833FE2 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F65EC9B2DCA4164008BAD5C /* WatchConnectivity.framework */; };
 		0F793F492DD6206200833FE2 /* GOPQWatchOS Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0F65EC442DC62115008BAD5C /* GOPQWatchOS Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -37,6 +39,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0F06F6262DD96DCC00473977 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0F65EC522DC62117008BAD5C /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -51,6 +63,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F06F5C42DD8DC6F00473977 /* DataContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataContext.swift; sourceTree = "<group>"; };
 		0F65EC442DC62115008BAD5C /* GOPQWatchOS Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GOPQWatchOS Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F65EC9B2DCA4164008BAD5C /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		0F65ED1D2DCB4294008BAD5C /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
@@ -60,12 +73,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0F65ED202DCBA514008BAD5C /* Exceptions for "GOPQ" folder in "GOPQWatchOS Watch App" target */ = {
+		0F06F62A2DD9877300473977 /* Exceptions for "Model" folder in "GOPQWatchOS Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				DataContext.swift,
-				Model/ScheduleItemData.swift,
-				ModelViews/UserDataController.swift,
+				ScheduleItemData.swift,
+				UserDataController.swift,
 			);
 			target = 0F65EC432DC62115008BAD5C /* GOPQWatchOS Watch App */;
 		};
@@ -79,6 +91,24 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0F06F6282DD9876F00473977 /* Model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0F06F62A2DD9877300473977 /* Exceptions for "Model" folder in "GOPQWatchOS Watch App" target */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0F06F6312DD991FD00473977 /* AppIntents */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AppIntents;
+			sourceTree = "<group>";
+		};
+		0F06F6332DD991FD00473977 /* Shortcuts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shortcuts;
+			sourceTree = "<group>";
+		};
 		0F65EC452DC62115008BAD5C /* GOPQWatchOS Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "GOPQWatchOS Watch App";
@@ -88,7 +118,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				BB66547B2DA3BC3900E578F3 /* Exceptions for "GOPQ" folder in "GOPQ" target */,
-				0F65ED202DCBA514008BAD5C /* Exceptions for "GOPQ" folder in "GOPQWatchOS Watch App" target */,
 			);
 			path = GOPQ;
 			sourceTree = "<group>";
@@ -142,6 +171,10 @@
 		0F65EC5D2DC62697008BAD5C /* SharedCode */ = {
 			isa = PBXGroup;
 			children = (
+				0F06F5C42DD8DC6F00473977 /* DataContext.swift */,
+				0F06F6282DD9876F00473977 /* Model */,
+				0F06F6312DD991FD00473977 /* AppIntents */,
+				0F06F6332DD991FD00473977 /* Shortcuts */,
 			);
 			path = SharedCode;
 			sourceTree = "<group>";
@@ -189,12 +222,15 @@
 				0F65EC402DC62115008BAD5C /* Sources */,
 				0F65EC412DC62115008BAD5C /* Frameworks */,
 				0F65EC422DC62115008BAD5C /* Resources */,
+				0F06F6262DD96DCC00473977 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				0F06F6312DD991FD00473977 /* AppIntents */,
+				0F06F6332DD991FD00473977 /* Shortcuts */,
 				0F65EC452DC62115008BAD5C /* GOPQWatchOS Watch App */,
 			);
 			name = "GOPQWatchOS Watch App";
@@ -219,6 +255,9 @@
 				0F793F4B2DD6206200833FE2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				0F06F6282DD9876F00473977 /* Model */,
+				0F06F6312DD991FD00473977 /* AppIntents */,
+				0F06F6332DD991FD00473977 /* Shortcuts */,
 				BB635EBA2D92343900FF256C /* GOPQ */,
 			);
 			name = GOPQ;
@@ -358,6 +397,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F06F5E42DD8DC6F00473977 /* DataContext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F06F5E32DD8DC6F00473977 /* DataContext.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

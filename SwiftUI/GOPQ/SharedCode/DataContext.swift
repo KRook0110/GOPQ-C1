@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-
+#if os(iOS)
 class ModelManager {
     static let shared: ModelContainer = {
         
@@ -22,3 +22,4 @@ class ModelManager {
     }()
     
 }
+#endif

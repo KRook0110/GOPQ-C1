@@ -6,9 +6,12 @@
 //
 
 import Foundation
+#if os(iOS)
 import SwiftData
 import EventKit
+#endif
 
+#if os(iOS)
 @Model
 class ScheduleItemData : Identifiable{
     var id: UUID
@@ -19,7 +22,7 @@ class ScheduleItemData : Identifiable{
     var message: String
     var soundName: String
     var eventID: String = ""
-    var alertOffset: Int? = 0
+    var alertOffset: Int? = 5
     
     init(employeeName: String, startTime: Date, endTime: Date, location: String, message: String, soundName: String) {
         self.id = UUID()
@@ -46,6 +49,52 @@ class ScheduleItemData : Identifiable{
     }
     
 }
+
+#else 
+public struct ScheduleItemData: Identifiable {
+    public let id: UUID
+    public let employeeName: String
+    public let startTime: Date
+    public let endTime: Date
+    public let location: String
+    public let message: String
+    public let soundName: String
+    public let eventID: String = ""
+    public let alertOffset: Int? = 5
+    
+    init(
+        id: UUID = UUID(),
+        employeeName: String,
+        startTime: Date,
+        endTime: Date,
+        location: String,
+        message: String,
+        soundName: String,
+        alertOffset: Int? = 5
+    ) {
+        self.id = id
+        self.employeeName = employeeName
+        self.startTime = startTime
+        self.endTime = endTime
+        self.location = location
+        self.message = message
+        self.soundName = soundName
+    }
+    
+    func getStartTimeFormat() -> String {
+        formatDate(startTime)
+    }
+    func getEndTimeFormat() -> String {
+        formatDate(endTime)
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "HH:mm"
+        return fmt.string(from: date)
+    }
+}
+#endif
 
 func makeTime(hour: Int, min: Int ) -> Date {
     var componenents = Calendar.current.dateComponents([.year,.month,.day],from: Date())

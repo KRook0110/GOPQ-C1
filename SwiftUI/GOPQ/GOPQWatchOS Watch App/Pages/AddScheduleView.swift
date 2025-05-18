@@ -27,10 +27,6 @@ struct AddScheduleView: View {
     @State private var isSuccess = false
     @State private var isLoading = false
     
-    //    @State private var isSubmitting = false
-    //    @State private var message = ""
-    //    @State private var showMessage = false
-    
     var viewModel: WatchScheduleViewModel
     
     var body: some View {
@@ -85,13 +81,6 @@ struct AddScheduleView: View {
             }
             .navigationTitle("Tambah Jadwal")
             .navigationBarTitleDisplayMode(.inline)
-//            .toolbar {
-//                ToolbarItem(placement: .cancellationAction) {
-//                    Button("Cancel") {
-//                        dismiss()
-//                    }
-//                }
-//            }
             .alert(isSuccess ? "Success" : "Error", isPresented: $showAlert) {
                 Button("OK") {
                     if isSuccess {

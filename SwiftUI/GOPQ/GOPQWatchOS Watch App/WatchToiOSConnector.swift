@@ -14,12 +14,12 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     @Published var isReachable = false
     @Published var isConnected = false
-    @Published var schedules: [WatchScheduleItem] = []
+    @Published var schedules: [ScheduleItemData] = []
     @Published var lastUpdated: Date = Date()
     @Published var isLoading = false
-    @Published var connectionStatus: String = "Initializing..."
+    @Published var connectionStatus: String = "Initialize"
     
-    var onReceiveSchedules: (([WatchScheduleItem]) -> Void)?
+    var onReceiveSchedules: (([ScheduleItemData]) -> Void)?
     
     private var session: WCSession
     private var activationTimer: Timer?
@@ -35,12 +35,12 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
             session.activate()
             startActivationMonitoring()
         } else {
-            connectionStatus = "Watch Connectivity not supported"
+            connectionStatus = "Connection not supported"
         }
     }
     
     private func startActivationMonitoring() {
-        // status aktivasi di cek per sec buat debug
+        // Check status terus
         activationTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             
@@ -51,13 +51,11 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
                 
                 self.updateConnectionStatusMessage()
                 
-                // setiap true fetch data
                 if !previousReachable && self.isReachable {
-                    print("Watch: Phone became reachable, requesting schedules")
+                    print("Watch: Phone connected, requesting schedules")
                     self.requestSchedulesFromPhone()
                 }
                 
-                // kalo gagal trs coba session restart
                 if self.isConnected && !self.isReachable && self.retryCount < self.maxRetries {
                     self.retryCount += 1
                     print("Watch: Attempting reachability fix, attempt \(self.retryCount)")
@@ -69,17 +67,17 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     private func updateConnectionStatusMessage() {
         if !isConnected {
-            connectionStatus = "Connecting to phone..."
+            connectionStatus = "Connecting to phone"
         } else if !isReachable {
             connectionStatus = "Phone not reachable. Make sure your phone is nearby and unlocked."
         } else if isLoading {
-            connectionStatus = "Loading schedules..."
+            connectionStatus = "Loading schedules"
         } else {
             connectionStatus = "Connected"
         }
     }
     
-    // Send an empty message to try to establish reachability
+    // Reconnect reachability
     private func sendPingMessage() {
         session.sendMessage(
             ["type": "ping"],
@@ -94,6 +92,26 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
                 print("Watch: Ping failed: \(error.localizedDescription)")
             }
         )
+    }
+    
+    // Force ping with async/await pattern
+    func forcePing() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            session.sendMessage(
+                ["type": "ping", "priority": "high", "source": "shortcut"],
+                replyHandler: { _ in
+                    DispatchQueue.main.async {
+                        self.isReachable = true
+                        self.updateConnectionStatusMessage()
+                        continuation.resume(returning: true)
+                    }
+                },
+                errorHandler: { error in
+                    print("Watch: Force ping failed: \(error.localizedDescription)")
+                    continuation.resume(returning: false)
+                }
+            )
+        }
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
@@ -181,10 +199,7 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         print("Watch: Requesting schedules from phone")
         isLoading = true
         updateConnectionStatusMessage()
-        
-        // Try both methods to ensure data gets through
-        
-        // 1. Application context method
+
         do {
             try session.updateApplicationContext(["requestScheduleRefresh": true])
             print("Watch: Sent refresh request via application context")
@@ -192,9 +207,8 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
             print("Watch: Failed to request refresh via context: \(error.localizedDescription)")
         }
         
-        // 2. Direct message with reply handler
         session.sendMessage(
-            ["type": "requestSchedules"],
+            ["type": "requestSchedules", "source": "watchApp"],
             replyHandler: { response in
                 print("Watch: Got direct response from phone")
                 if let status = response["status"] as? String, status == "success",
@@ -236,23 +250,100 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         }
     }
     
-    // Add new calendar event from Watch
-    func addCalendarEvent(startTime: Date, endTime: Date, location: String, completion: @escaping (Bool, String) -> Void) {
-        guard isReachable else {
-            completion(false, "Phone is not reachable. Make sure your phone is nearby and unlocked.")
+    // Added all parameters to match the iOS model
+    func addCalendarEvent(
+        startTime: Date,
+        endTime: Date,
+        location: String,
+        employeeName: String = "Self",
+        message: String = "GOPQ Alert",
+        soundName: String = "",
+        alertOffset: Int = 5,
+        completion: @escaping (Bool, String) -> Void
+    ) {
+        guard isConnected else {
+            print("Watch: Session not activated yet")
+            completion(false, "Watch not connected to phone. Please try again.")
             return
         }
         
+        // Special handling for Shortcuts - attempt to force session activation
+        if !isReachable {
+            print("Watch: Phone not reachable, trying to establish connection first")
+            
+            // First force a ping to see if we can establish connection
+            session.sendMessage(
+                ["type": "ping", "priority": "high", "source": "shortcut_calendarEvent"],
+                replyHandler: { [weak self] _ in
+                    guard let self = self else { return }
+                    
+                    DispatchQueue.main.async {
+                        self.isReachable = true
+                        self.updateConnectionStatusMessage()
+                        
+                        // Now send the event after establishing reachability
+                        self.sendCalendarEventMessage(
+                            startTime: startTime,
+                            endTime: endTime,
+                            location: location,
+                            employeeName: employeeName,
+                            message: message,
+                            soundName: soundName,
+                            alertOffset: alertOffset,
+                            completion: completion
+                        )
+                    }
+                },
+                errorHandler: { error in
+                    print("Watch: Force ping before calendar event failed: \(error.localizedDescription)")
+                    completion(false, "Phone is not reachable. Make sure your phone is nearby and unlocked.")
+                }
+            )
+            return
+        }
+        
+        // If already reachable, send directly
+        sendCalendarEventMessage(
+            startTime: startTime,
+            endTime: endTime,
+            location: location,
+            employeeName: employeeName,
+            message: message,
+            soundName: soundName,
+            alertOffset: alertOffset,
+            completion: completion
+        )
+    }
+    
+    private func sendCalendarEventMessage(
+        startTime: Date,
+        endTime: Date,
+        location: String,
+        employeeName: String,
+        message: String,
+        soundName: String,
+        alertOffset: Int,
+        completion: @escaping (Bool, String) -> Void
+    ) {
         let message: [String: Any] = [
             "type": "addCalendarEvent",
             "startDate": startTime.timeIntervalSince1970,
             "endDate": endTime.timeIntervalSince1970,
-            "location": location
+            "location": location,
+            "employeeName": employeeName,
+            "message": message,
+            "soundName": soundName,
+            "alertOffset": alertOffset,
+            "source": "watchOS", // Identify source for debugging
+            "timestamp": Date().timeIntervalSince1970 // Add timestamp to make messages unique
         ]
+        
+        print("Watch: Sending calendar event request to phone: \(message)")
         
         session.sendMessage(
             message,
             replyHandler: { response in
+                print("Watch: Received response for calendar event: \(response)")
                 if let status = response["status"] as? String, status == "success" {
                     completion(true, response["message"] as? String ?? "Success")
                 } else {
@@ -260,6 +351,7 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
                 }
             },
             errorHandler: { error in
+                print("Watch: Error sending calendar event: \(error.localizedDescription)")
                 completion(false, "Error: \(error.localizedDescription)")
             }
         )
@@ -268,14 +360,13 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     func deleteSchedule(id: String) {
         let message = [
             "type": "deleteSchedule",
-            "scheduleId": id
+            "scheduleId": id,
         ]
         
         session.sendMessage(
             message,
             replyHandler: { response in
                 print("Delete request for schedule \(id) sent successfully")
-                // Process response if needed
             },
             errorHandler: { error in
                 print("Failed to send delete request for schedule \(id): \(error.localizedDescription)")
@@ -287,8 +378,8 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         }
     }
     
-    private func convertDictToSchedules(_ dictArray: [[String: Any]]) -> [WatchScheduleItem] {
-        return dictArray.map { dict -> WatchScheduleItem in
+    private func convertDictToSchedules(_ dictArray: [[String: Any]]) -> [ScheduleItemData] {
+        return dictArray.map { dict -> ScheduleItemData in
             let id = UUID(uuidString: dict["id"] as? String ?? UUID().uuidString) ?? UUID()
             let employeeName = dict["employeeName"] as? String ?? ""
             let startTimeInterval = dict["startTime"] as? TimeInterval ?? 0
@@ -298,7 +389,7 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
             let soundName = dict["soundName"] as? String ?? ""
             let alertOffset = dict["alertOffset"] as? Int ?? 0
             
-            return WatchScheduleItem(
+            return ScheduleItemData(
                 id: id,
                 employeeName: employeeName,
                 startTime: Date(timeIntervalSince1970: startTimeInterval),

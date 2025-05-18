@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct ScheduleDetailView: View {
-    let schedule: WatchScheduleItem
+    let schedule: ScheduleItemData
     
     var body: some View {
         List {
             Section {
-                LabeledContent("Employee", value: schedule.employeeName)
                 LabeledContent("Start", value: schedule.getStartTimeFormat())
                 LabeledContent("End", value: schedule.getEndTimeFormat())
                 LabeledContent("Location", value: schedule.location)

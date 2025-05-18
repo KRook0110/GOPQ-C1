@@ -7,7 +7,13 @@
 
 import AppIntents
 import Foundation
+#if os(iOS)
 import SwiftData
+#endif
+
+#if os(watchOS)
+import WatchConnectivity
+#endif
 
 struct AddShiftIntent: AppIntent {
     static var title: LocalizedStringResource = "Add Shift"
@@ -36,6 +42,7 @@ struct AddShiftIntent: AppIntent {
     
     func perform() async throws -> some IntentResult & ProvidesDialog {
         
+#if os(iOS)
         let newShift = ScheduleItemData(
             employeeName: employeeName,
             startTime: startTime,
@@ -56,10 +63,28 @@ struct AddShiftIntent: AppIntent {
             
             // sync kalender
             ScheduleController.shared.ekmanager.syncEvent(newShift)
+            WatchConnector.shared.sendDataToWatch()
             
             // Kirim notifikasi untuk update UI
             NotificationCenter.default.post(name: Notification.Name("ScheduleDataUpdated"), object: nil)
         }
+#elseif os(watchOS)
+        if WCSession.isSupported() {
+            let session = WCSession.default
+            session.activate()
+            let payload: [String:Any] = [
+                "type": "addCalendarEvent",
+                "startDate": startTime.timeIntervalSince1970,
+                "endDate":   endTime.timeIntervalSince1970,
+                "location":  location,
+                "employeeName": employeeName,
+                "message":      message,
+                "soundName":    soundName,
+                "alertOffset":  alertOffset
+            ]
+            session.transferUserInfo(payload)
+        }
+#endif
         
         // Format tanggal untuk dialog
         let formatter = DateFormatter()

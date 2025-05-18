@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ScheduleItemRow: View {
-    let schedule: WatchScheduleItem
+    let schedule: ScheduleItemData
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -22,7 +22,6 @@ struct ScheduleItemRow: View {
         .padding()
         .frame(height: 80)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.gray.opacity(0.2))
         .cornerRadius(10)
         .padding(.vertical, 4)
         .listRowBackground(Color.clear)
