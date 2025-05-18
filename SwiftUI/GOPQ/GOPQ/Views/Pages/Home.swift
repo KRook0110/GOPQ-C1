@@ -6,14 +6,26 @@
 //
 import SwiftUI
 
+enum HomepageActiveSheet: Int, Identifiable {
+    case manualAddSheet
+    case newShiftSheet
+    case textImportSheet
+
+    var id: Int {
+        return self.rawValue
+    }
+}
+
 struct home: View {
 
     var schedule: ScheduleItemData
     @Environment(UserData.self) private var userdata
     @Environment(AppGlobal.self) private var appGlobal
-    @State var showManualAddSheets: Bool = false
-    @State var showNewShiftSheet: Bool = false
+    @Environment(ScheduleController.self) private var scheduleController
+    @State var activeSheet: HomepageActiveSheet? = nil
     @State var contentHeight: CGFloat = 200
+    @State var textImportText: String = ""
+    @Binding var scheduleBuffer: [ScheduleItemData]
 
     var body: some View {
         ZStack {
@@ -37,7 +49,7 @@ struct home: View {
                 ScheduleList()
                 Spacer()
                 Button {
-                    showNewShiftSheet = true
+                    activeSheet = .newShiftSheet
                 } label: {
                     HStack {
                         Spacer()
@@ -51,11 +63,15 @@ struct home: View {
                     .cornerRadius(16)
                     .padding()
                 }
-                .sheet(isPresented: $showManualAddSheets) {
-                    AddScheduleSheets(sheetControl: $showManualAddSheets, schedule: .empty)
-                }
-                .sheet(isPresented: $showNewShiftSheet) {
-                    addScheduleSheet
+                .sheet(item: $activeSheet) { (sheet: HomepageActiveSheet) in
+                    switch sheet {
+                    case .newShiftSheet:
+                        addScheduleSheet
+                    case .manualAddSheet:
+                        AddScheduleSheets(sheetControl: $activeSheet, schedule: schedule)
+                    case .textImportSheet:
+                        textImportSheet
+                    }
                 }
             }
         }
@@ -67,21 +83,20 @@ struct home: View {
             List {
                 Group {
                     Button {
-                        showNewShiftSheet = false
+                        activeSheet = .textImportSheet
                     } label: {
-                        Label("Text Import", systemImage: "character")
+                        Label("Impor Teks", systemImage: "character")
                     }
                     Button {
-                        showNewShiftSheet = false
+                        activeSheet = nil
                         appGlobal.showImportSheet = true
                     } label: {
-                        Label("File Import", systemImage: "text.document")
+                        Label("Impor File", systemImage: "text.document")
                     }
                     Button {
-                        showNewShiftSheet = false
-                        showManualAddSheets = true
+                        activeSheet = .manualAddSheet
                     } label: {
-                        Label("Custom Add", systemImage: "plus.circle")
+                        Label("Manual", systemImage: "plus.circle")
                     }
                 }
                 .foregroundStyle(.white)
@@ -93,13 +108,58 @@ struct home: View {
         .presentationDetents([.height(contentHeight)])
         .presentationDragIndicator(.visible)
     }
+
+    @ViewBuilder
+    private var textImportSheet: some View {
+        NavigationView {
+            VStack {
+                Form {
+                    TextEditor(text: $textImportText)
+                        .onAppear {
+                            textImportText.removeAll()
+                        }
+                }
+            }
+            .navigationBarTitle("Impor Teks")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button("Batal") {
+                        activeSheet = nil
+                    }
+                }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button("Selesai") {
+                        activeSheet = nil
+                        let temp = TextToScheduleItemsParser(textImportText)
+                        let res = temp.parse()
+                        let filteredSchedules = res.filter { $0.employeeName == userdata.username }
+                        if filteredSchedules.isEmpty {
+                            scheduleBuffer = res
+                            scheduleController.namesInFileImport = Set(
+                                res.map {
+                                    return $0.employeeName
+                                })
+                            scheduleController.showPickName = true
+                            return
+                        }
+                        for schedule in filteredSchedules {
+                            schedule.employeeName = userdata.username
+                            scheduleController.insert(schedule)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 struct home_Previews: PreviewProvider {
 
     static var previews: some View {
         EnvironmentalTemp {
-            home(schedule: .empty)
+            home(schedule: .empty, scheduleBuffer: .constant([]))
         }
     }
 }

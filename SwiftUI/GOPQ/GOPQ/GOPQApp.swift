@@ -51,7 +51,7 @@ struct GOPQApp: App {
 
     @ViewBuilder
     var HomeSeperatedView: some View {
-        home(schedule: .empty)
+        home(schedule: .empty, scheduleBuffer: $scheduleBuffer)
 
             .onChange(of: scenePhase, initial: false) {
                 if scenePhase == .background || scenePhase == .inactive {
@@ -117,7 +117,7 @@ struct GOPQApp: App {
                     }
                 }
             }
-            .alert("Duplicate Import", isPresented: $showDuplicateImportError) {
+            .alert("Impor Duplikat", isPresented: $showDuplicateImportError) {
                 Button {
                 } label: {
                     Text("No")
@@ -140,7 +140,7 @@ struct GOPQApp: App {
                 .keyboardShortcut(.defaultAction)
             } message: {
                 Text(
-                    "You have imported this file before, are you sure you want to import this file again?"
+                    "Anda pernah mengimpor list ini sebelumnya, lanjutkan impor?"
                 )
             }
             .transition(.move(edge: .trailing))

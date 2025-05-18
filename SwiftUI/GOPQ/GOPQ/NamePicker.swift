@@ -24,11 +24,11 @@ struct NamePicker: View {
                     }
                 }
             }
-            .navigationTitle("Choose Name")
+            .navigationTitle("Pilih Nama")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("Batal") {
                         dismiss()
                     }
                 }
