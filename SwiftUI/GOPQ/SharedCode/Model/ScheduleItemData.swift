@@ -51,7 +51,7 @@ class ScheduleItemData : Identifiable{
 }
 
 #else 
-public struct ScheduleItemData: Identifiable {
+public struct ScheduleItemData: Identifiable, Equatable {
     public let id: UUID
     public let employeeName: String
     public let startTime: Date

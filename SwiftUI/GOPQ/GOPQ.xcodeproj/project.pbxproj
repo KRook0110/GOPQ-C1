@@ -49,6 +49,16 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0F06F64D2DD9C91400473977 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0F65EC522DC62117008BAD5C /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -223,6 +233,7 @@
 				0F65EC412DC62115008BAD5C /* Frameworks */,
 				0F65EC422DC62115008BAD5C /* Resources */,
 				0F06F6262DD96DCC00473977 /* Embed Frameworks */,
+				0F06F64D2DD9C91400473977 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);

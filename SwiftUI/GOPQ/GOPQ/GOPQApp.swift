@@ -21,6 +21,11 @@ class AppGlobal{
 
 @main
 struct GOPQApp: App {
+    
+    init() {
+        _ = WatchConnector.shared
+    }
+    
     @Environment(\.scenePhase) private var scenePhase // .background if close to termination
     @State var appGlobal = AppGlobal()
     @State var csvController = CSVController()

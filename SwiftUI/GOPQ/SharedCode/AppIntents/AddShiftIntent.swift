@@ -19,13 +19,13 @@ struct AddShiftIntent: AppIntent {
     static var title: LocalizedStringResource = "Add Shift"
     static var description = IntentDescription("Add a new shift to your schedule.")
     
-    @Parameter(title: "Waktu Mulai")
+    @Parameter(title: "Start Time")
     var startTime: Date
     
-    @Parameter(title: "Waktu Selesai")
+    @Parameter(title: "End Time")
     var endTime: Date
     
-    @Parameter(title: "Lokasi")
+    @Parameter(title: "Location")
     var location: String
     
     @Parameter(title: "Employee Name", default: "Self")
@@ -69,6 +69,7 @@ struct AddShiftIntent: AppIntent {
             NotificationCenter.default.post(name: Notification.Name("ScheduleDataUpdated"), object: nil)
         }
 #elseif os(watchOS)
+        print("Test intent")
         if WCSession.isSupported() {
             let session = WCSession.default
             session.activate()

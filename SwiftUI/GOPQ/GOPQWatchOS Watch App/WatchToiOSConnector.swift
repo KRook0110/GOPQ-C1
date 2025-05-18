@@ -167,19 +167,23 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     // Process schedules received from phone
     private func processReceivedSchedules(_ data: [String: Any]) {
         guard let schedulesData = data["schedules"] as? [[String: Any]] else {
-            print("Watch: No schedules data in message")
             return
         }
         
-        DispatchQueue.main.async {
-            self.schedules = self.convertDictToSchedules(schedulesData)
-            self.lastUpdated = Date()
-            self.isLoading = false
-            print("Watch: Received \(self.schedules.count) schedules from phone")
-            
-            self.onReceiveSchedules?(self.schedules)
-            self.updateConnectionStatusMessage()
+        let newSchedules = convertDictToSchedules(schedulesData)
+        
+        if newSchedules != self.schedules {
+            DispatchQueue.main.async {
+                        self.schedules = self.convertDictToSchedules(schedulesData)
+                        self.lastUpdated = Date()
+                        self.isLoading = false
+                        print("Watch: Received \(self.schedules.count) schedules from phone")
+                        
+                        self.onReceiveSchedules?(self.schedules)
+                        self.updateConnectionStatusMessage()
+                    }
         }
+        
     }
     
     // Request schedules when app becomes active
@@ -199,7 +203,7 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         print("Watch: Requesting schedules from phone")
         isLoading = true
         updateConnectionStatusMessage()
-
+        
         do {
             try session.updateApplicationContext(["requestScheduleRefresh": true])
             print("Watch: Sent refresh request via application context")
@@ -361,21 +365,26 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         let message = [
             "type": "deleteSchedule",
             "scheduleId": id,
+            "requestId": UUID().uuidString
         ]
         
         session.sendMessage(
             message,
-            replyHandler: { response in
-                print("Delete request for schedule \(id) sent successfully")
+            replyHandler: { [weak self] response in
+                guard let self else { return }
+                
+                if let success = response["status"] as? Bool, success {
+                    DispatchQueue.main.async {
+                        self.schedules.removeAll { $0.id.uuidString == id }
+                    }
+                }
+                self.requestSchedulesFromPhone()
             },
             errorHandler: { error in
-                print("Failed to send delete request for schedule \(id): \(error.localizedDescription)")
+                print("Failed to send delete request: \(error.localizedDescription)")
+                self.requestSchedulesFromPhone() // Force refresh
             }
         )
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.requestSchedulesFromPhone()
-        }
     }
     
     private func convertDictToSchedules(_ dictArray: [[String: Any]]) -> [ScheduleItemData] {

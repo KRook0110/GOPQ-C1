@@ -20,9 +20,13 @@ struct ScheduleListView: View {
                     ScheduleItemRow(schedule: schedule)
                 }
             }
-            .onDelete(perform: deleteSchedule)
+            .onDelete { offsets in
+                withAnimation {
+                    deleteSchedule(offsets)
+                }
+            }
+            AddScheduleButton(action: navigateToAddSchedule).listRowBackground(Color.clear)
         }
         .listStyle(.carousel)
-        AddScheduleButton(action: navigateToAddSchedule)
     }
 }

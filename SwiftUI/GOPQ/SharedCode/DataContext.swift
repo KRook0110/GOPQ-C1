@@ -10,16 +10,28 @@ import SwiftData
 
 #if os(iOS)
 class ModelManager {
-    static let shared: ModelContainer = {
-        
-        let configuration = ModelConfiguration(for: ScheduleItemData.self)
+    static let shared = ModelManager()
+    
+    let container: ModelContainer
+    let mainContext: ModelContext
+    let backgroundContext: ModelContext
+    
+    private init() {
+        let schema = Schema([ScheduleItemData.self])
+        let config = ModelConfiguration("GOPQ", schema: schema)
         
         do {
-            return try ModelContainer(for: ScheduleItemData.self, configurations: configuration)
+            container = try ModelContainer(for: schema, configurations: config)
+            mainContext = ModelContext(container)
+            backgroundContext = ModelContext(container)
+            backgroundContext.autosaveEnabled = false
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            fatalError("Failed to initialize ModelContainer: \(error)")
         }
-    }()
+    }
     
+    func saveBackground() {
+        try? backgroundContext.save()
+    }
 }
 #endif

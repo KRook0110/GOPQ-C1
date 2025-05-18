@@ -8,7 +8,7 @@
 import Foundation
 import WatchConnectivity
 
-class WatchConnector: NSObject, WCSessionDelegate {
+class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     static let shared = WatchConnector()
     var session: WCSession
@@ -252,7 +252,6 @@ class WatchConnector: NSObject, WCSessionDelegate {
                     // Remove from EventKit calendar
                     ScheduleController.shared.ekmanager.removeEvent(scheduleToDelete)
                     
-                    // Remove from Core Data
                     context.delete(scheduleToDelete)
                     try? context.save()
                     

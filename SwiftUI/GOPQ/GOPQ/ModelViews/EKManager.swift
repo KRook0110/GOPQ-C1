@@ -9,7 +9,6 @@
 
 import Foundation
 import EventKit
-import UIKit
 
 enum CalendarError: Error {
     case CError(String)
